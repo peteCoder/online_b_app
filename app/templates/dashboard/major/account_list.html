@@ -1,0 +1,54 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3"><strong>Accounts</strong></h1>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Add table-responsive wrapper to make table scrollable on smaller screens -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Account Number</th>
+                                        <th>Account Type</th>
+                                        <th>Balance</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account in accounts %}
+                                    <tr>
+                                        <td>{{ account.account_number }}</td>
+                                        <td>{{ account.account_type }}</td>
+                                        <td>${{ account.balance }}</td>
+                                        <td>
+                                            <span class="badge {% if account.status == 'active' %} bg-success {% else %} bg-warning {% endif %}">
+                                                {{ account.status|capfirst }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'accounts_detail' account.id %}" class="btn btn-outline text-primary">View Details</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No accounts available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div> <!-- End of table-responsive -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

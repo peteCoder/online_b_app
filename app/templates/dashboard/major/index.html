@@ -1,0 +1,333 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3"><strong>Dashboard</strong> </h1>
+
+
+
+        <div class="w-100">
+            <div class="row">
+                <!-- Total Balance -->
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">TOTAL BALANCE</h5>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="dollar-sign"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3 text-md" style="font-size: 25px !important;">
+                                ${{user.get_total_amount_in_account}}</h1>
+                            <!-- <div class="mb-0">
+                                <span class="text-success"><i class="mdi mdi-arrow-bottom-right"></i> 4.7%
+                                </span>
+                                <span class="text-muted">Since last month</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                {% for account in accounts %}
+                {% if account %}
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title text-capitalize">{{ account.account_type }}
+                                        {{account_model_meta.model_name}}
+                                    </h5>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="dollar-sign"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3 " style="font-size: 25px !important;">${{ account.balance }}</h1>
+                            <!-- <div class="mb-0">
+                                <span class="text-success"><i class="mdi mdi-arrow-bottom-right"></i> 4.7%
+                                </span>
+                                <span class="text-muted">Since last month</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+                {% if has_loan %}
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title  text-capitalize"> {{ loan_model_meta.model_name }}
+                                    </h5>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="dollar-sign"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3" style="font-size: 25px !important;">${{ loan.amount }}</h1>
+                            <!-- <div class="mb-0">
+                                <span class="text-success"><i class="mdi mdi-arrow-bottom-right"></i> 4.7%
+                                </span>
+                                <span class="text-muted">Since last month</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+
+                {% endif %}
+
+
+            </div>
+        </div>
+
+
+
+        <!-- Recent Transactions Section -->
+
+        <div class="card flex-fill w-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Transactions</h5>
+            </div>
+            <div class="card-body py-3">
+                <div class="chart chart-sm">
+                    <canvas id="recent-transaction-line"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Spending Breakdown -->
+            <div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Spending Categories</h5>
+                    </div>
+                    <div class="card-body d-flex">
+                        <div class="align-self-center w-100">
+                            <div class="py-3">
+                                <div class="chart chart-xs">
+                                    <canvas id="spending-pie-chart"></canvas>
+                                </div>
+                            </div>
+                            <table class="table mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td>Groceries</td>
+                                        <td class="text-end">$1,230</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Utilities</td>
+                                        <td class="text-end">$450</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Entertainment</td>
+                                        <td class="text-end">$560</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Overview -->
+            <div class="col-12 col-md-12 col-xxl-6 d-flex order-3 order-xxl-2">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Financial Overview</h5>
+                    </div>
+                    <div class="card-body px-4">
+                        <div id="financial-overview-map" style="height:350px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Widget -->
+            <div class="col-12 col-md-6 col-xxl-3 d-flex order-1 order-xxl-1">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Calendar</h5>
+                    </div>
+                    <div class="card-body d-flex">
+                        <div class="align-self-center w-100">
+                            <div class="chart">
+                                <div id="datetimepicker-dashboard"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Loan Applications -->
+        <div class="row">
+            <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Latest Loan Applications</h5>
+                    </div>
+                    <table class="table table-hover my-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="d-none d-xl-table-cell">Application Date</th>
+                                <th class="d-none d-xl-table-cell">Amount</th>
+                                <th>Status</th>
+                                <th class="d-none d-md-table-cell">Loan Officer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Doe</td>
+                                <td class="d-none d-xl-table-cell">01/09/2024</td>
+                                <td class="d-none d-xl-table-cell">$10,000</td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                                <td class="d-none d-md-table-cell">Jane Smith</td>
+                            </tr>
+                            <tr>
+                                <td>Jane Cooper</td>
+                                <td class="d-none d-xl-table-cell">15/08/2024</td>
+                                <td class="d-none d-xl-table-cell">$5,000</td>
+                                <td><span class="badge bg-success">Approved</span></td>
+                                <td class="d-none d-md-table-cell">William Harris</td>
+                            </tr>
+                            <tr>
+                                <td>Michael Brown</td>
+                                <td class="d-none d-xl-table-cell">07/08/2024</td>
+                                <td class="d-none d-xl-table-cell">$12,000</td>
+                                <td><span class="badge bg-danger">Rejected</span></td>
+                                <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Monthly Spending -->
+            <div class="col-12 col-lg-4 col-xxl-3 d-flex">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Monthly Spending</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-4">January 2024</h6>
+                        <div class="progress progress-sm mb-4">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 50%;">
+                                $2,500/$5,000
+                            </div>
+                        </div>
+
+                        <h6 class="mb-4">February 2024</h6>
+                        <div class="progress progress-sm mb-4">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 75%;">
+                                $3,750/$5,000
+                            </div>
+                        </div>
+
+                        <h6 class="mb-4">March 2024</h6>
+                        <div class="progress progress-sm mb-4">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 60%;">
+                                $3,000/$5,000
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}
+
+
+
+{% block script %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+        // Get data passed from the backend
+        var checkingData = JSON.parse('{{ checking_data|safe }}');
+        var savingsData = JSON.parse('{{ savings_data|safe }}');
+        var months = JSON.parse('{{ months_data|safe }}');
+
+
+
+        console.log(months)
+
+        // Line chart
+        new Chart(document.getElementById("recent-transaction-line"), {
+            type: "line",
+            data: {
+                labels: months,
+                datasets: [{
+                    label: "Checking Account ($)",
+                    fill: true,
+                    backgroundColor: "transparent",
+                    borderColor: window.theme.primary,
+                    data: checkingData
+                }, {
+                    label: "Saving Account ($)",
+                    fill: true,
+                    backgroundColor: "transparent",
+                    borderColor: "#ff0000",
+                    borderDash: [4, 4],
+                    data: savingsData
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    intersect: false
+                },
+                hover: {
+                    intersect: true
+                },
+                plugins: {
+                    filler: {
+                        propagate: false
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        reverse: true,
+                        gridLines: {
+                            color: "rgba(0,0,0,0.05)"
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            stepSize: 500
+                        },
+                        display: true,
+                        borderDash: [5, 5],
+                        gridLines: {
+                            color: "rgba(0,0,0,0)",
+                            fontColor: "#fff"
+                        }
+                    }]
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

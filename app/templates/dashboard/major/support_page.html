@@ -1,0 +1,94 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3"><strong>Support</strong> Center</h1>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Submit a Support Request</h5>
+                        <form action="" method="post">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter the subject of your request" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="5" placeholder="Provide a detailed description of your request" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="attachment" class="form-label">Attachment (optional)</label>
+                                <input type="file" class="form-control" id="attachment" name="attachment">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Submit Request</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Contact Information</h5>
+                        <p>If you need immediate assistance, please contact our support team:</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Email:</strong> support@yourbank.com</li>
+                            <li><strong>Phone:</strong> +1 234 567 8900</li>
+                            <li><strong>Live Chat:</strong> Available 24/7 on our website</li>
+                        </ul>
+                        <h5 class="mt-4">FAQs</h5>
+                        <ul>
+                            <li><a href="#faq1">How to reset my password?</a></li>
+                            <li><a href="#faq2">How to update my account information?</a></li>
+                            <li><a href="#faq3">What to do if I suspect fraud?</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Previous Support Requests</h5>
+                        <table class="table table-responsive">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Subject</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in support_requests %}
+                                <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td><a href="">{{ request.subject }}</a></td>
+                                    <td>{{ request.status }}</td>
+                                    <td>{{ request.date_submitted }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No support requests submitted yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

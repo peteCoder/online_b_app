@@ -1,0 +1,166 @@
+{% load static %}
+
+<header class="fcb-global-nav-header" data-component="navigation" data-analytics="top navigation">
+    <div class="fcb-global-nav-header__container">
+        <a href="/">
+            <picture class="fcb-image fcb-global-nav-header__logo">
+                <source media="(min-width: 375px)"
+                    srcset="{% static 'images/image.20230612_1.png 2x' %}, {% static 'images/image.20230612.png 1x' %}">
+                <source
+                    srcset="{% static 'images/image.20230612_3.png 2x' %}, {% static 'images/image.20230612_2.png 1x' %}">
+                <img class="fcb-image__image fcb-global-nav-header__logo-image"
+                    alt="Link to the First Citizens homepage" src="{% static 'images/image.20230612.png' %}">
+            </picture>
+        </a>
+        <div class="fcb-global-nav-header__menu-wrapper">
+            <ul class="fcb-global-nav-header__main-nav">
+
+                <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
+                    <div class="fcb-global-nav-header__main-nav-link-wrapper">
+                        <a href="{% url 'register' %}"
+                            class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront fcb-global-nav-header__main-nav-link--current-storefront"
+                            aria-expanded="false" data-analytics="Personal">
+
+                            <span class="fcb-global-nav-header__main-nav-link-text">
+                                Personal
+                            </span>
+                            <svg class="fcb-icon fcb-icon--md fcb-icon--sys-chevron-thick" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-chevron-thick">
+
+                                <use xlink:href="images/icons.svg#sys-chevron-thick"></use>
+                            </svg>
+                            <svg class="fcb-icon fcb-icon--inline fcb-icon--sys-triangle" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-triangle">
+
+                                <use xlink:href="images/icons.svg#sys-triangle"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </li>
+
+
+                <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
+                    <div class="fcb-global-nav-header__main-nav-link-wrapper">
+                        <a href="{% url 'register' %}"
+                            class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront"
+                            aria-expanded="false" data-analytics="Small Business">
+
+                            <span class="fcb-global-nav-header__main-nav-link-text">
+                                Small Business
+                            </span>
+                            <svg class="fcb-icon fcb-icon--md fcb-icon--sys-chevron-thick" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-chevron-thick">
+
+                                <use xlink:href="images/icons.svg#sys-chevron-thick"></use>
+                            </svg>
+                            <svg class="fcb-icon fcb-icon--inline fcb-icon--sys-triangle" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-triangle">
+
+                                <use xlink:href="images/icons.svg#sys-triangle"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </li>
+
+
+                <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
+                    <div class="fcb-global-nav-header__main-nav-link-wrapper">
+                        <a href="{% url 'register' %}"
+                            class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront"
+                            aria-expanded="false" data-analytics="Commercial">
+
+                            <span class="fcb-global-nav-header__main-nav-link-text">
+                                Commercial
+                            </span>
+                            <svg class="fcb-icon fcb-icon--md fcb-icon--sys-chevron-thick" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-chevron-thick">
+
+                                <use xlink:href="images/icons.svg#sys-chevron-thick"></use>
+                            </svg>
+                            <svg class="fcb-icon fcb-icon--inline fcb-icon--sys-triangle" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-triangle">
+
+                                <use xlink:href="images/icons.svg#sys-triangle"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </li>
+
+
+                <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
+                    <div class="fcb-global-nav-header__main-nav-link-wrapper">
+                        <a href="{% url 'register' %}"
+                            class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront"
+                            aria-expanded="false" data-analytics="Wealth">
+
+                            <span class="fcb-global-nav-header__main-nav-link-text">
+                                Wealth
+                            </span>
+                            <svg class="fcb-icon fcb-icon--md fcb-icon--sys-chevron-thick" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-chevron-thick">
+
+                                <use xlink:href="images/icons.svg#sys-chevron-thick"></use>
+                            </svg>
+                            <svg class="fcb-icon fcb-icon--inline fcb-icon--sys-triangle" aria-hidden="true"
+                                focusable="false" data-trackable="true" data-asset-id="sys-triangle">
+
+                                <use xlink:href="images/icons.svg#sys-triangle"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="fcb-global-nav-header__utility-links">
+                <li>
+                    <a class="fcb-global-nav-header__utility-link" href="/support">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+
+
+                    </a>
+                </li>
+                <li>
+                    <button class="fcb-global-nav-header__utility-link fcb-modal__trigger" type="button"
+                        aria-controls="fcb-modal--yext-global-search-master" data-analytics="Search">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+
+        <button class="fcb-global-nav-header__cta-button fcb-modal__trigger" type="button"
+            aria-controls="fcb-modal--login-master">
+
+            <span class="sr-only">
+
+                Log into our online services
+            </span>
+            <span aria-hidden="true">
+
+                Log In
+            </span>
+
+        </button>
+
+        <button type="button" class="fcb-global-nav-header__hamburger-button" aria-label="Menu" aria-expanded="false">
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+            </svg>
+
+        </button>
+    </div>
+
+</header>

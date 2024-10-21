@@ -1,0 +1,147 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3"> <strong>Accounts</strong></h1>
+
+        <div class="row">
+            <!-- Profile Section -->
+            <div class="col-md-4 col-xl-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img src="{% static 'img/profile-picture-placeholder.png' %}"
+                            class="img-fluid rounded-circle mb-2" width="128" height="128" alt="Profile Picture" />
+                        <h5 class="card-title mb-0">John Doe</h5>
+                        <div class="text-muted mb-2">johndoe@gmail.com</div>
+
+                        <div>
+                            <a class="btn btn-primary btn-sm" href="#">Edit Profile</a>
+                            <a class="btn btn-outline-primary btn-sm" href="#">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Details Section -->
+            <div class="col-md-8 col-xl-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Account Number:</strong></p>
+                                <p class="text-muted">1234567890</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Account Type:</strong></p>
+                                <p class="text-muted">Savings Account</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Total Balance:</strong></p>
+                                <p class="text-muted">$12,480.23</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Currency:</strong></p>
+                                <p class="text-muted">USD</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>03/10/2024</td>
+                                        <td>ATM Withdrawal</td>
+                                        <td>$200.00</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>01/10/2024</td>
+                                        <td>Online Purchase</td>
+                                        <td>$50.00</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>30/09/2024</td>
+                                        <td>Salary Deposit</td>
+                                        <td>$1,500.00</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>29/09/2024</td>
+                                        <td>POS Transaction</td>
+                                        <td>$75.00</td>
+                                        <td><span class="badge bg-warning">Pending</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Account Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p class="mb-0">Change Password</p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <a href="#" class="btn btn-outline-primary btn-sm">Change</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p class="mb-0">Set up Two-Factor Authentication</p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <a href="#" class="btn btn-outline-primary btn-sm">Enable</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p class="mb-0">Account Notifications</p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <a href="#" class="btn btn-outline-primary btn-sm">Manage</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

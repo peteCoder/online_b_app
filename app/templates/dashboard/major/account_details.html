@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Account Details for {{ account.account_number }}</h1>
+
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Account Number:</strong> {{ account.account_number }}</p>
+                        <p><strong>Account Type:</strong> {{ account.account_type }}</p>
+                        <p><strong>Balance:</strong> ${{ account.balance }}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge {% if account.status == 'active' %} bg-success {% else %} bg-warning {% endif %}">
+                                {{ account.status|capfirst }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for transaction in transactions %}
+                            <li class="list-group-item">
+                                {{ transaction.date }} - {{ transaction.description }} - ${{ transaction.amount }}
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-center">No recent transactions</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

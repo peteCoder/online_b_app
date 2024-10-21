@@ -1,0 +1,63 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Details for {{ card.card_type }}</h1>
+
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Card Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Card Type:</strong> {{ card.card_type }}</p>
+                        <p><strong>Card Number:</strong> {{ card.card_number }}</p>
+                        <p><strong>CVV:</strong> {{ card.cvv }}</p>
+                        <p><strong>Exp. Date:</strong> {{ card.expiration_date }}</p>
+                        <!-- <p><strong>Balance:</strong> ${{ card.balance }}</p> -->
+                        <p><strong>Active:</strong>
+                            <span class="badge {% if card.activated %} bg-success {% else %} bg-danger {% endif %}">
+                                {% if card.activated %}
+                                Active
+                                {% else %}
+                                Inactive
+                                {% endif %}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if not card.activated %}
+                        <div class="">In order to activate card, You must pay the following card activation fee:
+                        </div>
+                        {% endif %}
+
+                        <ul class="list-group">
+                            {% for transaction in transactions %}
+                            <li class="list-group-item">
+                                {{ transaction.date }} - {{ transaction.description }} - ${{ transaction.amount }}
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-center">No recent transactions</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</main>
+{% endblock %}
