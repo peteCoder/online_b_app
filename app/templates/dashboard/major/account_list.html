@@ -4,13 +4,17 @@
 {% block content %}
 <main class="content">
     <div class="container-fluid p-0">
-        <h1 class="h3 mb-3"><strong>Accounts</strong></h1>
-        
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-5">
+            <h1 class=""><strong>Accounts</strong></h1>
+            {% if not account_count > 3 %}
+            <a href="{% url 'create_bank_account' %}" class="btn-primary btn">Add Account</a>
+            {% endif %}
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <!-- Add table-responsive wrapper to make table scrollable on smaller screens -->
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -29,12 +33,17 @@
                                         <td>{{ account.account_type }}</td>
                                         <td>${{ account.balance }}</td>
                                         <td>
-                                            <span class="badge {% if account.status == 'active' %} bg-success {% else %} bg-warning {% endif %}">
-                                                {{ account.status|capfirst }}
+                                            <span
+                                                class="badge {% if account.activated %} bg-success {% else %} bg-danger {% endif %}">
+                                                {{ account.status }}
+                                            </span>
+                                            <span>
+                                                {% if account.activated %} Active {% else %} Inactive {% endif %}
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{% url 'accounts_detail' account.id %}" class="btn btn-outline text-primary">View Details</a>
+                                            <a href="{% url 'accounts_detail' account.id %}"
+                                                class="btn btn-outline text-primary">View Details</a>
                                         </td>
                                     </tr>
                                     {% empty %}
@@ -44,7 +53,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                        </div> <!-- End of table-responsive -->
+                        </div>
                     </div>
                 </div>
             </div>

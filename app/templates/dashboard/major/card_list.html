@@ -19,6 +19,7 @@
                                         <th>Card Number</th>
                                         <th>CVV</th>
                                         <th>Exp. Date</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -27,13 +28,28 @@
                                         <td>
                                             <a href="{% url 'card_detail' card.id %}">{{ card.card_type }}</a>
                                         </td>
-                                        <td>{{ card.card_number }}</td>
-                                        <td>{{ card.cvv }}</td>
+                                        <td>
+                                            {% if card.activated %}
+                                            {{ card.card_number }}
+                                            {% else %}
+                                            **********
+                                            {% endif %}
+                                        </td>
+                                        <td>{% if card.activated %} {{ card.cvv }} {% else %} *** {% endif %}</td>
                                         <td>
                                             <span class="">
                                                 <span class="exp-date" data-date="{{ card.expiration_date }}">
                                                     {{ card.expiration_date }}
                                                 </span>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="">
+                                                {% if card.activated %}
+                                                <span class="badge bg-success">Active</span>
+                                                {% else %}
+                                                <span class="badge bg-danger">Inactive</span>
+                                                {% endif %}
                                             </span>
                                         </td>
                                     </tr>

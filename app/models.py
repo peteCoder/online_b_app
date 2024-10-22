@@ -77,6 +77,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 
+
+
+
 def change_account_location():
     ACCOUNT_LOCATIONS = [
         "1475 Huntington Drive Duarte, California 91010",
@@ -90,25 +93,78 @@ def change_account_location():
     location = random.choice(ACCOUNT_LOCATIONS)
     return location
 
+def generate_ach_routing():
+    """Auto-generate a random ACH routing number."""
+    return ''.join([str(random.randint(0, 9)) for _ in range(9)])
 
+def generate_account_number():
+    """Auto-generate a random 10-digit account number."""
+    return ''.join([str(random.randint(0, 9)) for _ in range(10)])
 
 class Account(models.Model):
     ACCOUNT_TYPES = (
         ('CHECKING', 'Checking'),
         ('SAVINGS', 'Savings'),
+        ('MONEY MARKET', 'Money Market'),
+        ('CD', 'Certificate of Deposit (CD)'),
     )
 
+    # Required fields
     customer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    account_number = models.CharField(max_length=20, unique=True)
-    account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPES)
+    account_number = models.CharField(max_length=100, unique=True, default=generate_account_number)
+    account_type = models.CharField(max_length=40, choices=ACCOUNT_TYPES)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     bank_name = models.CharField(max_length=200, blank=True, null=True, default="FirstCitzen Bank")
     location = models.CharField(max_length=500, blank=True, null=True, default=change_account_location)
-    ach_routing = models.CharField(max_length=200, blank=True, null=True)
+    ach_routing = models.CharField(max_length=9, blank=True, null=True, default=generate_ach_routing)
 
-    
+
+     # Shared fields
+    id_card_front = models.ImageField(upload_to='id_cards/', null=True, blank=True)
+    id_card_back = models.ImageField(upload_to='id_cards/', null=True, blank=True)
+
+    # Savings account-specific fields
+    yearly_income = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    proof_of_funds = models.FileField(upload_to='proof_of_funds/', null=True, blank=True)
+    credit_card_image = models.ImageField(upload_to='credit_cards/', null=True, blank=True)
+
+    # Money Market account-specific fields
+    initial_balance = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    proof_of_employment = models.FileField(upload_to='employment_proofs/', null=True, blank=True)
+    utility_bill = models.FileField(upload_to='utility_bills/', null=True, blank=True)
+
+    # CD account-specific fields
+    deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    beneficiary_name = models.CharField(max_length=255, null=True, blank=True)
+    beneficiary_id_proof = models.FileField(upload_to='beneficiary_id_proofs/', null=True, blank=True)
+    term_length = models.IntegerField(null=True, blank=True, help_text="Term length in months")
+
+    # Checking account-specific fields
+    initial_deposit = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    overdraft_protection = models.BooleanField(default=False)
+
+    confirmation_payment_amount = models.IntegerField(default=100)
+    transaction_limit = models.IntegerField(default=1000)
+
+
+    # proof_of_income = models.ImageField(upload_to='proof-of-income/', null=True, blank=True)
+    activation_receipt = models.ImageField(upload_to='receipts/', null=True, blank=True)
+    activated = models.BooleanField(default=False)
+    applied_for_activation = models.BooleanField(default=False)
+
+
+    def generate_confirmation_payment_amount(self, initial_deposit):
+        if self.account_type == "CHECKING":
+            self.confirmation_payment_amount = 200
+        elif self.account_type == "SAVINGS":
+            if int(initial_deposit) > 100:
+                self.confirmation_payment_amount = int(initial_deposit)
+            self.confirmation_payment_amount = 100
+        else:
+            self.confirmation_payment_amount = 300
+
     def __str__(self):
         return f"{self.customer.email} - {self.account_type} ({self.account_number})"
 
@@ -116,7 +172,7 @@ class Account(models.Model):
         verbose_name_plural = "Accounts"
         verbose_name = "Account"
 
-
+        
 
 class Transaction(models.Model):
     TRANSACTION_TYPES = (
@@ -131,6 +187,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
     status = models.CharField(max_length=20, default='Pending')
 
     def __str__(self):
@@ -154,8 +211,13 @@ class Card(models.Model):
     card_type = models.CharField(max_length=10, choices=CARD_TYPES)
     cvv = models.CharField(max_length=3)
     expiration_date = models.DateField()
+
+    confirmation_receipt = models.ImageField(upload_to='receipts/', null=True, blank=True)
+
     activated = models.BooleanField(default=False)
-    applied_for_activation = models.IntegerField(default=100)
+    card_activation_fee = models.IntegerField(default=100)
+    applied_for_activation = models.BooleanField(default=False)
+     
     created_at = models.DateTimeField(auto_now_add=True)
 
     def generate_card_number(self):

@@ -1,0 +1,149 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Create New Account</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="account_type" class="form-label">Account Type</label>
+                <select id="account_type" name="account_type" class="form-control" required>
+                    <option value="">Select an account type</option>
+                    {% for key, value in account_types_to_create %}
+                    {% if key not in existing_account_types %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="dynamicFields"></div>
+
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+
+        {% if existing_account_types %}
+        <h5 class="mt-5">Your Existing Accounts:</h5>
+        <ul>
+            {% for account_type in existing_account_types %}
+            <li>{{ account_type }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <h5 class="mt-5" style="color: rgb(163, 163, 163);">You have no existing account.</h5>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.getElementById('account_type').addEventListener('change', function () {
+        const dynamicFields = document.getElementById('dynamicFields');
+        const selectedType = this.value;
+
+        dynamicFields.innerHTML = '';
+
+        if (selectedType === 'SAVINGS') {
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label for="yearly_income" class="form-label">Yearly Income</label>
+                    <input type="number" id="yearly_income" name="yearly_income" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="proof_of_funds" class="form-label">Proof of Funds</label>
+                    <input type="file" id="proof_of_funds" name="proof_of_funds" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="credit_card_image" class="form-label">Credit Card Image</label>
+                    <input type="file" id="credit_card_image" name="credit_card_image" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="utility_bill" class="form-label">Utility Bill</label>
+                    <input type="file" id="utility_bill" name="utility_bill" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_card_front" class="form-label">ID Card Front</label>
+                    <input type="file" id="id_card_front" name="id_card_front" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_back" class="form-label">ID Card Back</label>
+                    <input type="file" id="id_card_back" name="id_card_back" class="form-control" required>
+                </div>
+            `;
+        } else if (selectedType === 'MONEY MARKET') {
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label for="initial_balance" class="form-label">Initial Balance</label>
+                    <input type="number" id="initial_balance" name="initial_balance" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="proof_of_employment" class="form-label">Proof of Employment</label>
+                    <input type="file" id="proof_of_employment" name="proof_of_employment" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="utility_bill" class="form-label">Utility Bill</label>
+                    <input type="file" id="utility_bill" name="utility_bill" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_front" class="form-label">ID Card Front</label>
+                    <input type="file" id="id_card_front" name="id_card_front" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_back" class="form-label">ID Card Back</label>
+                    <input type="file" id="id_card_back" name="id_card_back" class="form-control" required>
+                </div>
+            `;
+        } else if (selectedType === 'CD') {
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label for="deposit_amount" class="form-label">Deposit Amount</label>
+                    <input type="number" id="deposit_amount" name="deposit_amount" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="beneficiary_name" class="form-label">Beneficiary Name</label>
+                    <input type="text" id="beneficiary_name" name="beneficiary_name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="beneficiary_id_proof" class="form-label">Beneficiary ID Proof of funds</label>
+                    <input type="file" id="beneficiary_id_proof" name="beneficiary_id_proof" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_front" class="form-label">ID Card Front</label>
+                    <input type="file" id="id_card_front" name="id_card_front" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_back" class="form-label">ID Card Back</label>
+                    <input type="file" id="id_card_back" name="id_card_back" class="form-control" required>
+                </div>
+            `;
+        } else if (selectedType === 'CHECKING') {
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label for="initial_deposit" class="form-label">Initial Deposit</label>
+                    <input type="number" id="initial_deposit" name="initial_deposit" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_front" class="form-label">ID Card Front</label>
+                    <input type="file" id="id_card_front" name="id_card_front" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_back" class="form-label">ID Card Back</label>
+                    <input type="file" id="id_card_back" name="id_card_back" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="overdraft_protection" class="form-label">Overdraft Protection</label>
+                    <input type="checkbox" id="overdraft_protection" name="overdraft_protection">
+                </div>
+                
+                
+            `;
+        }
+    });
+</script>
+{% endblock %}

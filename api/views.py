@@ -33,6 +33,8 @@ def get_monthly_transactions(account_type, year, user):
     # Return data as list of amounts for each month
     return [int(monthly_data[month]) for month in range(1, 13)]
 
+
+
 @api_view(['GET'])
 def generate_transaction_chart(request):
 
@@ -50,24 +52,9 @@ def generate_transaction_chart(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Create your views here.
 @api_view(['POST'])
 def create_user(request):
-
     if request.method == 'POST':
         first_name =  request.data.get("first_name")
         last_name =  request.data.get("last_name")
@@ -110,8 +97,6 @@ def create_user(request):
                         error_message for error_message in email_valid_status.error_messages
                     ])
                 }, status=status.HTTP_400_BAD_REQUEST)
-            
-        
             
     return Response({"message": "This is working"})
 

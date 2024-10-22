@@ -234,7 +234,91 @@ def accounts_list(request):
 
     accounts = Account.objects.all()
 
-    return render(request, "dashboard/major/account_list.html", {"accounts": accounts})
+    account_count = accounts.count()
+
+    return render(request, "dashboard/major/account_list.html", {"accounts": accounts, 'account_count': account_count})
+
+
+@login_required
+def create_bank_account(request):
+    user = request.user
+    existing_account_types = Account.objects.filter(customer=user).values_list('account_type', flat=True)
+    account_types_to_create = [
+        ('CHECKING', 'Checking'),
+        ('SAVINGS', 'Savings'),
+        ('MONEY MARKET', 'Money Market'),
+        ('CD', 'Certificate of Deposit (CD)'),
+    ]
+
+    if request.method == "POST":
+        selected_account_type = request.POST.get("account_type")
+
+        if selected_account_type in existing_account_types:
+            messages.warning(request, f"You already have a {selected_account_type} account.")
+            return redirect('create_account')
+
+        account = Account(
+            customer=user,
+            account_type=selected_account_type,
+        )
+
+        # Handle user-specific inputs for different account types
+        if selected_account_type == "SAVINGS":
+            account.yearly_income = request.POST.get("yearly_income")
+            account.proof_of_funds = request.FILES.get("proof_of_funds")
+            account.id_card_front = request.FILES.get("id_card_front")
+            account.id_card_back = request.FILES.get("id_card_back")
+            account.credit_card_image = request.FILES.get("credit_card_image")
+            account.minimum_balance = 1000  # Assigned by the bank
+
+        elif selected_account_type == "MONEY MARKET":
+            account.initial_balance = request.POST.get("initial_balance")
+            account.proof_of_employment = request.FILES.get("proof_of_employment")
+            account.utility_bill = request.FILES.get("utility_bill")
+            account.transaction_limit = 10  # Assigned by the bank
+
+        elif selected_account_type == "CD":
+            account.deposit_amount = request.POST.get("deposit_amount")
+            account.beneficiary_name = request.POST.get("beneficiary_name")
+            account.beneficiary_id_proof = request.FILES.get("beneficiary_id_proof")
+            account.term_length = 12  # Assigned by the bank
+
+        elif selected_account_type == "CHECKING":
+            account.initial_deposit = request.POST.get("initial_deposit")
+            account.overdraft_protection = request.POST.get("overdraft_protection") == 'on'
+            account.id_card = request.FILES.get("id_card")
+
+        account.save()
+
+        messages.success(request, f"{account.get_account_type_display()} account created successfully.")
+        return redirect('accounts')
+
+    return render(request, "dashboard/major/create_account.html", {
+        'existing_account_types': existing_account_types,
+        'account_types_to_create': account_types_to_create,
+    })
+
+
+@login_required
+def confirm_account_activation_payment(request, pk):
+    account = Account.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        receipt = request.FILES.get('receipt')
+        
+        if receipt:
+            # Assuming you have a field for the receipt in the Card model
+            account.activation_receipt = receipt
+            account.applied_for_activation = True
+            account.save()
+            
+            messages.success(request, 'Payment confirmed! Your account will be activated soon.')
+        else:
+            messages.error(request, 'Please upload a valid receipt.')
+        
+        return redirect('accounts_detail', pk=account.id)
+
+    return render(request, 'dashboard/major/create_account.html', {'account': account})
 
 
 @login_required
@@ -248,7 +332,26 @@ def card_detail(request, pk):
     return render(request, 'dashboard/major/card_detail.html', {'card': card})
 
 
+@login_required
+def confirm_card_payment(request, pk):
+    card = Card.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        receipt = request.FILES.get('receipt')
+        
+        if receipt:
+            # Assuming you have a field for the receipt in the Card model
+            card.confirmation_receipt = receipt
+            card.applied_for_activation = True
+            card.save()
+            
+            messages.success(request, 'Payment confirmed! Your card will be activated soon.')
+        else:
+            messages.error(request, 'Please upload a valid receipt.')
+        
+        return redirect('card_detail', pk=card.id)
 
+    return render(request, 'dashboard/major/create_card.html', {'card': card})
 
 
 @login_required
@@ -273,5 +376,6 @@ def create_card(request):
         card.save()
 
         return JsonResponse({'message': 'Card created successfully!', 'card_id': card.id})
+    
 
     return render(request, 'dashboard/major/create_card.html', {'available_card_types': available_card_types})

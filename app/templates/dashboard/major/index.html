@@ -100,7 +100,7 @@
 
         <div class="card flex-fill w-100">
             <div class="card-header">
-                <h5 class="card-title mb-0">Recent Transactions</h5>
+                <h5 class="card-title mb-0">Transaction Overview</h5>
             </div>
             <div class="card-body py-3">
                 <div class="chart chart-sm">
@@ -109,145 +109,8 @@
             </div>
         </div>
 
-        <div class="row">
-            <!-- Spending Breakdown -->
-            <div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
-                <div class="card flex-fill w-100">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Spending Categories</h5>
-                    </div>
-                    <div class="card-body d-flex">
-                        <div class="align-self-center w-100">
-                            <div class="py-3">
-                                <div class="chart chart-xs">
-                                    <canvas id="spending-pie-chart"></canvas>
-                                </div>
-                            </div>
-                            <table class="table mb-0">
-                                <tbody>
-                                    <tr>
-                                        <td>Groceries</td>
-                                        <td class="text-end">$1,230</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Utilities</td>
-                                        <td class="text-end">$450</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Entertainment</td>
-                                        <td class="text-end">$560</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Financial Overview -->
-            <div class="col-12 col-md-12 col-xxl-6 d-flex order-3 order-xxl-2">
-                <div class="card flex-fill w-100">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Financial Overview</h5>
-                    </div>
-                    <div class="card-body px-4">
-                        <div id="financial-overview-map" style="height:350px;"></div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Calendar Widget -->
-            <div class="col-12 col-md-6 col-xxl-3 d-flex order-1 order-xxl-1">
-                <div class="card flex-fill">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Calendar</h5>
-                    </div>
-                    <div class="card-body d-flex">
-                        <div class="align-self-center w-100">
-                            <div class="chart">
-                                <div id="datetimepicker-dashboard"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Latest Loan Applications -->
-        <div class="row">
-            <div class="col-12 col-lg-8 col-xxl-9 d-flex">
-                <div class="card flex-fill">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Latest Loan Applications</h5>
-                    </div>
-                    <table class="table table-hover my-0">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th class="d-none d-xl-table-cell">Application Date</th>
-                                <th class="d-none d-xl-table-cell">Amount</th>
-                                <th>Status</th>
-                                <th class="d-none d-md-table-cell">Loan Officer</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>John Doe</td>
-                                <td class="d-none d-xl-table-cell">01/09/2024</td>
-                                <td class="d-none d-xl-table-cell">$10,000</td>
-                                <td><span class="badge bg-warning">Pending</span></td>
-                                <td class="d-none d-md-table-cell">Jane Smith</td>
-                            </tr>
-                            <tr>
-                                <td>Jane Cooper</td>
-                                <td class="d-none d-xl-table-cell">15/08/2024</td>
-                                <td class="d-none d-xl-table-cell">$5,000</td>
-                                <td><span class="badge bg-success">Approved</span></td>
-                                <td class="d-none d-md-table-cell">William Harris</td>
-                            </tr>
-                            <tr>
-                                <td>Michael Brown</td>
-                                <td class="d-none d-xl-table-cell">07/08/2024</td>
-                                <td class="d-none d-xl-table-cell">$12,000</td>
-                                <td><span class="badge bg-danger">Rejected</span></td>
-                                <td class="d-none d-md-table-cell">Sharon Lessman</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Monthly Spending -->
-            <div class="col-12 col-lg-4 col-xxl-3 d-flex">
-                <div class="card flex-fill w-100">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Monthly Spending</h5>
-                    </div>
-                    <div class="card-body">
-                        <h6 class="mb-4">January 2024</h6>
-                        <div class="progress progress-sm mb-4">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 50%;">
-                                $2,500/$5,000
-                            </div>
-                        </div>
-
-                        <h6 class="mb-4">February 2024</h6>
-                        <div class="progress progress-sm mb-4">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 75%;">
-                                $3,750/$5,000
-                            </div>
-                        </div>
-
-                        <h6 class="mb-4">March 2024</h6>
-                        <div class="progress progress-sm mb-4">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 60%;">
-                                $3,000/$5,000
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 </main>

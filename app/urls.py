@@ -1,5 +1,25 @@
 from django.urls import path
-from .views import home as dasboard_home, main_home, card_list, card_detail, profile, support_page, register, login_view, create_card, LogoutView, transfer_funds, loans, account_details, accounts_list, transactions, chartpage
+from .views import (
+    home as dasboard_home, 
+    main_home, 
+    card_list, 
+    create_bank_account, 
+    confirm_account_activation_payment, 
+    confirm_card_payment, 
+    card_detail, 
+    profile, 
+    support_page, 
+    register, 
+    login_view, 
+    create_card, 
+    LogoutView, 
+    transfer_funds, 
+    loans, 
+    account_details, 
+    accounts_list, 
+    transactions, 
+    chartpage
+)
 urlpatterns = [
     path('', dasboard_home, name="dashboard_home"),
     path('home/', main_home, name="main_home"),
@@ -7,8 +27,12 @@ urlpatterns = [
     path('logout/', LogoutView, name="logout"),
     path('register/', register, name="register"),
     path('chart/', chartpage, name="chartpage"),
+
     path('accounts/<int:pk>/', account_details, name="accounts_detail"),
     path('accounts/', accounts_list, name="accounts"),
+    path('accounts/create/', create_bank_account, name="create_bank_account"),
+    path('confirm-account-payment/<int:pk>/', confirm_account_activation_payment, name="confirm_account_activation_payment"),
+
     path('transactions/', transactions, name="transactions"),
     path('transfer/', transfer_funds, name="transfer_funds"),
     path('loans/', loans, name="loans"),
@@ -16,6 +40,7 @@ urlpatterns = [
     path('support/', support_page, name="support"),
     path('create-card/', create_card, name="create_card"),
     path('cards/', card_list, name="card_list"),
+    path('confirm-card-payment/<int:pk>/', confirm_card_payment, name="confirm_card_payment"),
     path('cards/<int:pk>/', card_detail, name="card_detail"),
 ]
 

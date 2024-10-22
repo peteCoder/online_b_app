@@ -7,6 +7,7 @@
         <h1 class="h3 mb-3">Details for {{ card.card_type }}</h1>
 
         <div class="row">
+            <!-- Card Information -->
             <div class="col-12 col-md-6">
                 <div class="card">
                     <div class="card-header">
@@ -17,7 +18,6 @@
                         <p><strong>Card Number:</strong> {{ card.card_number }}</p>
                         <p><strong>CVV:</strong> {{ card.cvv }}</p>
                         <p><strong>Exp. Date:</strong> {{ card.expiration_date }}</p>
-                        <!-- <p><strong>Balance:</strong> ${{ card.balance }}</p> -->
                         <p><strong>Active:</strong>
                             <span class="badge {% if card.activated %} bg-success {% else %} bg-danger {% endif %}">
                                 {% if card.activated %}
@@ -31,33 +31,67 @@
                 </div>
             </div>
 
+            <!-- Card Activation -->
             <div class="col-12 col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Recent Transactions</h5>
+                        <h5 class="card-title mb-0">Activate Card</h5>
                     </div>
                     <div class="card-body">
                         {% if not card.activated %}
-                        <div class="">In order to activate card, You must pay the following card activation fee:
-                        </div>
-                        {% endif %}
+                        <div class="mb-3">In order to activate your card, please pay the activation fee:</div>
 
-                        <ul class="list-group">
-                            {% for transaction in transactions %}
-                            <li class="list-group-item">
-                                {{ transaction.date }} - {{ transaction.description }} - ${{ transaction.amount }}
-                            </li>
-                            {% empty %}
-                            <li class="list-group-item text-center">No recent transactions</li>
-                            {% endfor %}
-                        </ul>
+                        <div class="display-5 mb-3">${{ card.card_activation_fee }}</div>
+
+                        <!-- Account details with copy button -->
+                        {% if not card.applied_for_activation %}
+                        <div class="mb-3">
+                            <p><strong>Bank Account Details:</strong></p>
+                            <p>
+                                <strong>Account Name:</strong> XYZ Bank<br>
+                                <strong>Account Number:</strong>
+                                <span id="account-number">1234567890</span>
+                                <button id="copy-btn" class="btn btn-sm btn-outline-secondary">
+                                    Copy
+                                </button><br>
+                                <strong>Bank Name:</strong> ABC Bank
+                            </p>
+                        </div>
+
+                        <!-- Payment confirmation form -->
+                        <form method="POST" enctype="multipart/form-data"
+                            action="{% url 'confirm_card_payment' card.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="receipt" class="form-label">Upload Payment Receipt:</label>
+                                <input type="file" class="form-control" id="receipt" name="receipt" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Submit Payment Confirmation</button>
+                        </form>
+                        {% else %}
+                        <div>Your application is being processed. Please await activation.</div>
+                        <div class="badge bg-warning">Pending</div>
+                        {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
 </main>
+{% endblock %}
+
+{% block script %}
+<script>
+    // Copy account number functionality
+    document.getElementById('copy-btn').addEventListener('click', function () {
+        const accountNumber = document.getElementById('account-number').textContent;
+        navigator.clipboard.writeText(accountNumber).then(() => {
+            alert('Account number copied to clipboard!');
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    });
+</script>
 {% endblock %}
