@@ -35,7 +35,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50, blank=False)  # Required
     last_name = models.CharField(max_length=50, blank=False)   # Required
     phone_number = models.CharField(max_length=15, unique=True, blank=False)  # Required
-    address = models.TextField(blank=False)  # Required
+    
     ssn = models.CharField(max_length=50, blank=False)  # Required
 
 
@@ -44,6 +44,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     employment_status = models.CharField(max_length=100, choices=EMPLOYMENT_STATUS, blank=True, null=True)
     preferred_account_type = models.CharField(max_length=100, choices=PREFERRED_ACCOUNT_TYPE, blank=True, null=True)
     profile_image = models.ImageField(upload_to="profile/images", blank=True, null=True)
+
+
+    address = models.TextField(blank=False)  # Required
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=100, blank=True, null=True)
+    
+
+
+
     front_id_image = models.ImageField(upload_to="identity/images", blank=True, null=True)
     back_id_image = models.ImageField(upload_to="identity/images", blank=True, null=True)
 
@@ -176,19 +186,24 @@ class Account(models.Model):
 
 class Transaction(models.Model):
     TRANSACTION_TYPES = (
-        ('DEPOSIT', 'Deposit'),
-        ('WITHDRAWAL', 'Withdrawal'),
-        ('TRANSFER', 'Transfer'),
+        ('DEPOSIT', 'DEPOSIT'),
+        ('WITHDRAWAL', 'WITHDRAWAL'),
+        ('TRANSFER', 'TRANSFER'),
     )
 
+    TRANSACTION_STATUS = [
+        ("Pending", "Pending"),
+        ("Successful", "Successful")
+    ]
+
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE) 
-    from_account = models.ForeignKey(Account, related_name='from_transactions', on_delete=models.CASCADE)
-    to_account = models.ForeignKey(Account, related_name='to_transactions', on_delete=models.CASCADE, null=True, blank=True)
+    from_account = models.ForeignKey(Account, related_name='from_transactions', on_delete=models.SET_NULL, null=True, blank=True)
+    to_account = models.ForeignKey(Account, related_name='to_transactions', on_delete=models.SET_NULL, null=True, blank=True)
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    status = models.CharField(max_length=20, default='Pending')
+    status = models.CharField(max_length=20, choices=TRANSACTION_STATUS, default='Pending')
 
     def __str__(self):
         return f"{self.transaction_type} - {self.amount} from {self.from_account.account_number}"
@@ -300,7 +315,7 @@ class Transfer(models.Model):
         return f"Transfer for {self.user.email} - {self.amount}"
     
     class Meta:
-        verbose_name_plural = "Transactions"
-        verbose_name = "Transaction"
+        verbose_name_plural = "Transfer"
+        verbose_name = "Transfer"
 
 

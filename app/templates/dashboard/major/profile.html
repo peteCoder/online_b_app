@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block content %}
+<div class="alert alert-success" id="success-message" style="display: none;">Profile updated successfully!</div>
+<div class="alert alert-danger" id="error-message" style="display: none;">Error updating profile. Please try again.</div>
+
 <main class="content">
     <div class="container-fluid p-0">
         <h1 class="h3 mb-3"><strong>Profile</strong> Settings</h1>
@@ -14,29 +17,22 @@
                         <h5 class="card-title">Personal Information</h5>
                         <form action="" method="post">
                             {% csrf_token %}
-
                             <div class="mb-3">
                                 <label for="first_name" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
-                                    value="{{ user.first_name }}" required>
+                                       value="{{ user.first_name }}" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="last_name" class="form-label">Last Name</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
-                                    value="{{ user.last_name }}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                    value="{{ user.email }}" required readonly>
+                                       value="{{ user.last_name }}" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="phone_number" class="form-label">Phone Number</label>
                                 <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                    value="{{ user_profile.phone_number }}" required>
+                                       value="{{ user_profile.phone_number }}" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Update Profile</button>
@@ -52,29 +48,22 @@
                         <h5 class="card-title">Address Information</h5>
                         <form action="" method="post">
                             {% csrf_token %}
-
                             <div class="mb-3">
                                 <label for="street_address" class="form-label">Street Address</label>
                                 <input type="text" class="form-control" id="street_address" name="street_address"
-                                    value="{{ user_profile.street_address }}" required>
+                                       value="{{ user_profile.street_address }}" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>
                                 <input type="text" class="form-control" id="city" name="city"
-                                    value="{{ user_profile.city }}" required>
+                                       value="{{ user_profile.city }}" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="state" class="form-label">State</label>
                                 <input type="text" class="form-control" id="state" name="state"
-                                    value="{{ user_profile.state }}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="postal_code" class="form-label">Postal Code</label>
-                                <input type="text" class="form-control" id="postal_code" name="postal_code"
-                                    value="{{ user_profile.postal_code }}" required>
+                                       value="{{ user_profile.state }}" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Update Address</button>
@@ -92,23 +81,22 @@
                         <h5 class="card-title">Change Password</h5>
                         <form action="" method="post">
                             {% csrf_token %}
-
                             <div class="mb-3">
                                 <label for="old_password" class="form-label">Current Password</label>
                                 <input type="password" class="form-control" id="old_password" name="old_password"
-                                    required>
+                                       required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="new_password" class="form-label">New Password</label>
                                 <input type="password" class="form-control" id="new_password" name="new_password"
-                                    required>
+                                       required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirm New Password</label>
                                 <input type="password" class="form-control" id="confirm_password"
-                                    name="confirm_password" required>
+                                       name="confirm_password" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Update Password</button>
@@ -116,19 +104,8 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Account Actions -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Account Actions</h5>
-                        <button class="btn btn-danger">Deactivate Account</button>
-                        <p class="mt-2">Warning: Deactivating your account will result in loss of access to services.
-                        </p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </main>
 {% endblock %}
+

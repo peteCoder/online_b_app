@@ -18,7 +18,7 @@ from .views import (
     account_details, 
     accounts_list, 
     transactions, 
-    chartpage
+    chartpage, validate_transfer, confirm_transfer
 )
 urlpatterns = [
     path('', dasboard_home, name="dashboard_home"),
@@ -42,6 +42,14 @@ urlpatterns = [
     path('cards/', card_list, name="card_list"),
     path('confirm-card-payment/<int:pk>/', confirm_card_payment, name="confirm_card_payment"),
     path('cards/<int:pk>/', card_detail, name="card_detail"),
+
+
+
+    path('validate-transfer/', validate_transfer, name="validate_transfer"),
+    path('confirm-transfer/', confirm_transfer, name="confirm_transfer"),
+
+
+
 ]
 
 

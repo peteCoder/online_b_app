@@ -1,9 +1,12 @@
+import json
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
-from .models import Account, Transaction, Loan, Card
+from .models import Account, Transaction, Loan, Card, Transfer
 
 from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth import get_user_model
 import json
@@ -22,6 +25,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from .forms import SignupForm
+
+
 
 
 
@@ -186,23 +191,112 @@ def transactions(request):
 @login_required
 def transfer_funds(request):
     transaction_records = Transaction.objects.all()
-
-    if request.method == 'POST':
-        form = TransferForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('success_page')  # redirect to a success page after transfer
-    else:
-        form = TransferForm()
+    accounts = Account.objects.filter(customer=request.user)
     
-    return render(request, "dashboard/major/transfer_funds.html", {})
+    
+    return render(request, "dashboard/major/transfer_funds.html", {'accounts': accounts})
+
+
+@csrf_exempt
+def validate_transfer(request):
+    if request.method == 'POST':
+        from_account_id = request.POST.get('from_account')
+        amount = request.POST.get('amount')
+        to_account = request.POST.get('to_account')
+
+        # Get the account and validate the balance
+        try:
+            from_account = Account.objects.get(id=from_account_id)
+            if from_account.balance < float(amount):
+                return JsonResponse({"success": False, "message": "Insufficient funds in the selected account."})
+        except Account.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Selected account does not exist."})
+
+        # Validate other details (like the existence of the to_account)
+        # This is just an example, you'd implement your own logic for validating the recipient's account
+
+        return JsonResponse({"success": True, "message": "Enter your Password"})
+    return JsonResponse({"success": False, "message": "Invalid request."})
+
+
+@csrf_exempt
+def confirm_transfer(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = request.user
+
+        # Validate password
+        password = data.get('password')
+        if not authenticate(username=user.email, password=password):
+            return JsonResponse({"success": False, "message": "Invalid password."})
+
+        # Process the transfer
+        from_account = Account.objects.get(id=data.get('from_account'))
+        amount = int(data.get('amount'))
+
+        if from_account.balance < amount:
+            return JsonResponse({"success": False, "message": "Insufficient funds."})
+
+        # Deduct the amount from the sender's account
+        from_account.balance -= amount
+        from_account.save()
+
+        # You'd also want to add code to credit the recipient's account
+
+        # Log the transfer
+        Transfer.objects.create(
+            user=user,
+            from_account=from_account,
+            account_holder_name=data.get('beneficiary_name'),
+            account_number=data.get('to_account'),
+            ach_routing=data.get('ach_routing'),
+            account_type=from_account.account_type,
+            bank_name=data.get('bank_name'),
+            amount=amount,
+            address=data.get('address')
+        )
+
+        Transaction.objects.create(
+            user=request.user,
+            transaction_type="TRANSFER",
+            from_account=from_account,
+            amount=amount,
+        )
+
+        return JsonResponse({"success": True, "message": "Transfer successful."})
+
+    return JsonResponse({"success": False, "message": "Invalid request."})
 
 @login_required
 def loans(request):
     return render(request, "dashboard/major/loan.html", {})
 
+
 @login_required
+@require_http_methods(["GET", "POST"])
 def profile(request):
+    if request.method == "POST":
+        # Get user profile data from the request
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        phone_number = request.POST.get("phone_number")
+        street_address = request.POST.get("street_address")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        postal_code = request.POST.get("postal_code")
+
+        # Update the user's information
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.phone_number = phone_number
+        user.address = street_address
+        user.city = city
+        user.state = state
+        user.postal_code = postal_code
+        user.save()
+
+        return JsonResponse({"message": "Profile updated successfully"}, status=200)
     return render(request, "dashboard/major/profile.html", {})
 
 @login_required

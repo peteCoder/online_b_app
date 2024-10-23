@@ -1,6 +1,31 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
 
+
+
+{% block style %}
+<style>
+    #errorMessage {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+    }
+
+    #successMessage {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #10ca10;
+        color: white;
+        border: 1px solid #10ca10;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <main class="content">
     <div class="container-fluid p-0">
@@ -8,9 +33,11 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <div class="card">
+                <div class="card p-2">
+
+
                     <div class="card-body">
-                        <form action="{% url 'transfer_funds' %}" method="post">
+                        <form id="transferForm">
                             {% csrf_token %}
 
                             <div class="mb-3">
@@ -18,33 +45,78 @@
                                 <select class="form-select" id="from_account" name="from_account" required>
                                     <option value="" disabled selected>Select account</option>
                                     {% for account in accounts %}
-                                    <option value="{{ account.id }}">{{ account.name }} - ${{ account.balance }}
-                                    </option>
+                                    <option value="{{ account.id }}">{{ account.account_number }} -
+                                        ${{account.balance}} - {{ account.account_type }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label for="to_account" class="form-label">To Account</label>
+                                <label for="to_account" class="form-label">To Account <span class="text-danger">*</span>
+                                </label>
                                 <input type="text" class="form-control" id="to_account" name="to_account"
                                     placeholder="Recipient Account Number" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="amount" class="form-label">Amount</label>
+                                <label for="bank_name" class="form-label">Bank Name<span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="bank_name" name="bank_name"
+                                    placeholder="Recipient Bank Name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Location<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="location" name="location"
+                                    placeholder="Bank Location" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="amount" name="amount"
                                     placeholder="Enter amount" required min="0">
                             </div>
 
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description"
-                                    placeholder="Optional" rows="2"></textarea>
+                                <label for="ach_routing" class="form-label">ACH Routing (Optional)</label>
+                                <input type="text" class="form-control" id="ach_routing" name="ach_routing"
+                                    placeholder="ACH Routing Number">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="beneficiary_name" class="form-label">Beneficiary Name<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="beneficiary_name" name="beneficiary_name"
+                                    placeholder="Beneficiary Name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Beneficiary Address<span
+                                        class="text-danger">*</span></label>
+                                <textarea class="form-control" id="address" name="address"
+                                    placeholder="Beneficiary Address" required rows="2"></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Transfer</button>
                         </form>
+
+                        <!-- Password confirmation section -->
+                        <div id="passwordSection" style="display: none;">
+                            <hr>
+                            <h5>Confirm Transfer</h5>
+                            <form id="passwordForm">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Enter your password<span
+                                            class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <button type="submit" class="btn btn-success">Confirm Transfer</button>
+                            </form>
+                        </div>
                     </div>
+                    <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                    <div id="successMessage" class="alert alert-success" style="display: none;"></div>
                 </div>
             </div>
 
@@ -63,4 +135,88 @@
         </div>
     </div>
 </main>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    document.getElementById('transferForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Collect form data
+        const formData = new FormData(this);
+
+        // Send an async POST request to validate the transfer details
+        fetch("{% url 'validate_transfer' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Accept": "application/json"
+            },
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('errorMessage').style.display = 'none';
+                    // Show password confirmation form if the initial validation is successful
+                    document.getElementById('passwordSection').style.display = 'block';
+                    localStorage.setItem('transferDetails', JSON.stringify(Object.fromEntries(formData))); // Store transfer details in localStorage
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = 'none';
+                    document.getElementById('successMessage').textContent = data.message;
+                } else {
+                    // Show error message
+                    document.getElementById('successMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorMessage').textContent = data.message;
+                    window.scrollY(0)
+
+
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Collect password and transfer details from localStorage
+        const password = document.getElementById('password').value;
+        const transferDetails = JSON.parse(localStorage.getItem('transferDetails'));
+
+        // Add password to the transfer details
+        transferDetails.password = password;
+
+        // Send an async POST request to confirm the transfer
+        fetch("{% url 'confirm_transfer' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(transferDetails)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Transfer successful
+                    alert('Transfer successful!');
+                    localStorage.removeItem('transferDetails'); // Clear localStorage after success
+                    document.getElementById('errorMessage').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('successMessage').textContent = data.message;
+                    window.location.href = "/"; // Optionally reload the page to reflect changes
+                } else {
+                    // Show error message
+                    document.getElementById('successMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorMessage').textContent = data.message;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+
 {% endblock %}
