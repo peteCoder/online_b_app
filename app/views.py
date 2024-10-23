@@ -1,5 +1,6 @@
 import json
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from .models import Account, Transaction, Loan, Card, Transfer
 
@@ -275,29 +276,73 @@ def loans(request):
 @login_required
 @require_http_methods(["GET", "POST"])
 def profile(request):
-    if request.method == "POST":
-        # Get user profile data from the request
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        phone_number = request.POST.get("phone_number")
-        street_address = request.POST.get("street_address")
-        city = request.POST.get("city")
-        state = request.POST.get("state")
-        postal_code = request.POST.get("postal_code")
+    # if request.method == "POST":
+    #     # Get user profile data from the request
+    #     first_name = request.POST.get("first_name")
+    #     last_name = request.POST.get("last_name")
+    #     phone_number = request.POST.get("phone_number")
+    #     street_address = request.POST.get("street_address")
+    #     city = request.POST.get("city")
+    #     state = request.POST.get("state")
+    #     postal_code = request.POST.get("postal_code")
 
-        # Update the user's information
-        user = request.user
-        user.first_name = first_name
-        user.last_name = last_name
-        user.phone_number = phone_number
-        user.address = street_address
-        user.city = city
-        user.state = state
-        user.postal_code = postal_code
-        user.save()
+    #     # Update the user's information
+    #     user = request.user
+    #     user.first_name = first_name
+    #     user.last_name = last_name
+    #     user.phone_number = phone_number
+    #     user.address = street_address
+    #     user.city = city
+    #     user.state = state
+    #     user.postal_code = postal_code
+    #     user.save()
 
-        return JsonResponse({"message": "Profile updated successfully"}, status=200)
+    #     return JsonResponse({"message": "Profile updated successfully"}, status=200)
     return render(request, "dashboard/major/profile.html", {})
+
+
+@login_required
+def update_personal_info(request):
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.phone_number = request.POST.get('phone_number')
+        user.save()
+        return JsonResponse({'message': 'Personal information updated successfully.'})
+    return JsonResponse({'error': 'Invalid request.'}, status=400)
+
+
+@login_required
+def update_address_info(request):
+    if request.method == 'POST':
+        user = request.user
+        user.address = request.POST.get('street_address')
+        user.city = request.POST.get('city')
+        user.state = request.POST.get('state')
+        user.postal_code = request.POST.get('postal_code')
+        user.save()
+        return JsonResponse({'message': 'Address updated successfully.'})
+    return JsonResponse({'error': 'Invalid request.'}, status=400)
+
+@login_required
+def update_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if new_password != confirm_password:
+            return JsonResponse({'error': 'New passwords do not match.'}, status=400)
+        
+        if not request.user.check_password(old_password):
+            return JsonResponse({'error': 'Current password is incorrect.'}, status=400)
+        
+        request.user.set_password(new_password)
+        request.user.save()
+        update_session_auth_hash(request, request.user)  # Prevents logging out after password change
+        return JsonResponse({'message': 'Password updated successfully.'})
+    return JsonResponse({'error': 'Invalid request.'}, status=400)
 
 @login_required
 def support_page(request):
