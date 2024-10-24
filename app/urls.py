@@ -15,6 +15,8 @@ from .views import (
     LogoutView, 
     transfer_funds, 
     loans, 
+    create_loan,
+    loan_detail,
     account_details, 
     accounts_list, 
     transactions, 
@@ -37,7 +39,11 @@ urlpatterns = [
 
     path('transactions/', transactions, name="transactions"),
     path('transfer/', transfer_funds, name="transfer_funds"),
+
+
     path('loans/', loans, name="loans"),
+    path('create-loan/', create_loan, name="create_loan"),
+    path('loan/<int:loan_id>/', loan_detail, name="loan_detail"),
 
 
     path('profile/', profile, name="profile"),

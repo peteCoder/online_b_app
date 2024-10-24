@@ -192,7 +192,7 @@ def transactions(request):
 @login_required
 def transfer_funds(request):
     transaction_records = Transaction.objects.all()
-    accounts = Account.objects.filter(customer=request.user)
+    accounts = Account.objects.filter(customer=request.user, activated=True)
     
     
     return render(request, "dashboard/major/transfer_funds.html", {'accounts': accounts})
@@ -268,9 +268,52 @@ def confirm_transfer(request):
 
     return JsonResponse({"success": False, "message": "Invalid request."})
 
+
+
+
+# @login_required
+# def create_loan(request):
+
+#     return render(request, "dashboard/major/loan_create.html", {})
+
+# @login_required
+# def loans(request):
+
+#     return render(request, "dashboard/major/loan.html", {})
+
+@login_required
+def create_loan(request):
+    if request.method == 'POST':
+        loan_type = request.POST['loan_type']
+        loan_amount = request.POST['loan_amount']
+        loan_term = request.POST['loan_term']
+        # Create loan with appropriate data
+        loan = Loan.objects.create(
+            customer=request.user,
+            loan_type=loan_type,
+            amount=loan_amount,
+            loan_term=loan_term
+        )
+        return redirect('loan_detail', loan_id=loan.id)
+
+    return render(request, "dashboard/major/loan_create.html", {})
+
 @login_required
 def loans(request):
-    return render(request, "dashboard/major/loan.html", {})
+    user_loans = Loan.objects.filter(customer=request.user)
+    loan_count = user_loans.count()
+    
+    return render(request, "dashboard/major/loan.html", {
+        'loans': user_loans,
+        'loan_count': loan_count
+    })
+
+@login_required
+def loan_detail(request, loan_id):
+    loan = Loan.objects.get(id=loan_id, customer=request.user)
+    return render(request, "dashboard/major/loan_detail.html", {'loan': loan})
+
+
 
 
 @login_required

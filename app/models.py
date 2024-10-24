@@ -278,12 +278,29 @@ class Card(models.Model):
         verbose_name = "Card"
 
 class Loan(models.Model):
+    LOAN_TYPES = [
+        ('personal', 'Personal Loan'),
+        ('mortgage', 'Mortgage'),
+        ('auto', 'Auto Loan'),
+        ('business', 'Business Loan')
+    ]
+
     customer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    loan_type = models.CharField(max_length=200, choices=LOAN_TYPES, blank=False, null=False)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
-    interest_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    loan_term = models.IntegerField(default=12)  # in months
+    interest_rate = models.DecimalField(max_digits=5, decimal_places=2, default=10.0)  # 10% interest rate
+    interest = models.DecimalField(max_digits=12, decimal_places=2, default=0)  # interest calculated based on formula
+    repayment_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)  # total repayable amount
     loan_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField()
     is_paid = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        self.interest = (self.amount * self.interest_rate * self.loan_term) / 100
+        self.repayment_amount = self.amount + self.interest
+        self.due_date = timezone.now() + timedelta(days=self.loan_term * 30)  # approx. due in months
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Loan for {self.customer.email} - {self.amount}"
@@ -291,7 +308,6 @@ class Loan(models.Model):
     class Meta:
         verbose_name_plural = "Loans"
         verbose_name = "Loan"
-
 
 
 class Transfer(models.Model):

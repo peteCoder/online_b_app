@@ -4,66 +4,52 @@
 {% block content %}
 <main class="content">
     <div class="container-fluid p-0">
-        <h1 class="h3 mb-3"><strong>Loan Request</strong></h1>
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-5">
+            <h1 class="h3"><strong>Loans</strong></h1>
+            {% if loan_count < 3 %}
+            <a href="{% url 'create_loan' %}" class="btn btn-primary">Apply for Loan</a>
+            {% endif %}
+        </div>
 
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="" method="post">
-                            {% csrf_token %}
-
-                            <div class="mb-3">
-                                <label for="loan_type" class="form-label">Loan Type</label>
-                                <select class="form-select" id="loan_type" name="loan_type" required>
-                                    <option value="" disabled selected>Select loan type</option>
-                                    <option value="personal">Personal Loan</option>
-                                    <option value="mortgage">Mortgage</option>
-                                    <option value="auto">Auto Loan</option>
-                                    <option value="business">Business Loan</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="loan_amount" class="form-label">Loan Amount</label>
-                                <input type="number" class="form-control" id="loan_amount" name="loan_amount"
-                                    placeholder="Enter loan amount" required min="0">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="loan_term" class="form-label">Loan Term (Months)</label>
-                                <input type="number" class="form-control" id="loan_term" name="loan_term"
-                                    placeholder="Enter loan term (e.g., 12 months)" required min="1">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="income" class="form-label">Monthly Income</label>
-                                <input type="number" class="form-control" id="income" name="income"
-                                    placeholder="Enter your monthly income" required min="0">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Purpose of Loan</label>
-                                <textarea class="form-control" id="description" name="description"
-                                    placeholder="Explain the purpose of this loan" rows="3" required></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Submit Loan Request</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Loan Guidelines</h5>
-                        <ul>
-                            <li>Ensure you meet the minimum income requirements before applying.</li>
-                            <li>Loan terms and conditions apply based on your credit score.</li>
-                            <li>Provide accurate information to avoid delays in processing.</li>
-                            <li>Interest rates vary by loan type and duration.</li>
-                        </ul>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Loan Type</th>
+                                        <th>Status</th>
+                                        <th>Principal</th>
+                                        <th>Months</th>
+                                        <th>Interest</th>
+                                        <th>Repayment Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for loan in loans %}
+                                    <tr>
+                                        <td>{{ loan.get_loan_type_display }}</td>
+                                        <td>
+                                            {% if loan.is_paid %}
+                                            <span class="badge bg-success">Paid</span>
+                                            {% else %}
+                                            <span class="badge bg-warning">Unpaid</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>₦{{ loan.amount }}</td>
+                                        <td>{{ loan.loan_term }}</td>
+                                        <td>₦{{ loan.interest }}</td>
+                                        <td>₦{{ loan.repayment_amount }}</td>
+                                        <td>
+                                            <a href="{% url 'loan_detail' loan.id %}" class="btn btn-info btn-sm">Details</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Loan Detail</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>Loan Type:</strong> {{ loan.get_loan_type_display }}</p>
+                        <p><strong>Amount:</strong> ${{ loan.amount }}</p>
+                        <p><strong>Term:</strong> {{ loan.loan_term }} months</p>
+                        <p><strong>Interest:</strong> ${{ loan.interest }}</p>
+                        <p><strong>Total Repayment:</strong> ${{ loan.repayment_amount }}</p>
+                        <p><strong>Status:</strong>
+                            {% if loan.is_paid %}
+                            <span class="badge bg-success">Paid</span>
+                            {% else %}
+                            <span class="badge bg-warning">Unpaid</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -41,7 +41,7 @@
                             {% csrf_token %}
 
                             <div class="mb-3">
-                                <label for="from_account" class="form-label">From Account</label>
+                                <label for="from_account" class="form-label">From Account<span class="text-danger">*</span></label>
                                 <select class="form-select" id="from_account" name="from_account" required>
                                     <option value="" disabled selected>Select account</option>
                                     {% for account in accounts %}
@@ -49,6 +49,7 @@
                                         ${{account.balance}} - {{ account.account_type }}</option>
                                     {% endfor %}
                                 </select>
+                                <span class="text-sm">Only activated accounts can make a transfer.</span>
                             </div>
 
                             <div class="mb-3">

@@ -16,6 +16,7 @@
                                     <tr>
                                         <th>Date</th>
                                         <th>Description</th>
+                                        <th>Account</th>
                                         <th>Amount</th>
                                         <th>Status</th>
                                     </tr>
@@ -23,8 +24,9 @@
                                 <tbody>
                                     {% for transaction in transactions %}
                                     <tr>
-                                        <td>{{ transaction.date }}</td>
-                                        <td>{{ transaction.description }}</td>
+                                        <td>{{ transaction.timestamp }}</td>
+                                        <td>{{ transaction.transaction_type }}</td>
+                                        <td>{{transaction.from_account.account_type}}</td>
                                         <td>${{ transaction.amount }}</td>
                                         <td>
                                             <span
