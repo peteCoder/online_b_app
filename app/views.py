@@ -418,6 +418,8 @@ def update_password(request):
 
         print(new_password)
         print(confirm_password)
+
+        
         
         if new_password != confirm_password:
             print("New passwords do not match.")
