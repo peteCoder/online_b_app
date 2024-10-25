@@ -26,7 +26,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from .forms import SignupForm
-
+from functools import reduce
 
 
 
@@ -70,15 +70,16 @@ def home(request):
 
 
     account_model_meta = {
-        'model_name': Account._meta.model_name.upper(),  # Account model name
+        'model_name': Account._meta.model_name.capitalize(),  # Account model name
     }
     loan_model_meta = {
-        'model_name': Loan._meta.model_name.upper(),  # Loan model name
+        'model_name': Loan._meta.model_name.capitalize(),  # Loan model name
     }
 
 
 
     has_loan = loans.count() > 0
+    has_account = accounts.count() > 0
 
     current_year = timezone.now().year
 
@@ -88,13 +89,26 @@ def home(request):
 
     all_transactions = Transaction.objects.all()
 
+    loan_amounts = [float(loan.amount) for loan in Loan.objects.all()]
+
+    loan_total = sum(loan_amounts)
+    
+    print("loan_amounts: ", loan_amounts)
+    print("loan_total: ", loan_total)
+
+
+
     
 
     return render(request, "dashboard/major/index.html", {
 
         'accounts': accounts,
         "loan": loans.first(),
+        "loans": loans,
+        "loan_total": loan_total,
         "has_loan": has_loan,
+
+        "has_account": has_account,
 
         # Labels
         "account_model_meta": account_model_meta,
@@ -284,10 +298,16 @@ def confirm_transfer(request):
 @login_required
 def create_loan(request):
     if request.method == 'POST':
+
+        # loan amount: 2000
+        # loan term: 1
+        # loan type: personal
+        
         loan_type = request.POST['loan_type']
         loan_amount = request.POST['loan_amount']
         loan_term = request.POST['loan_term']
         # Create loan with appropriate data
+        print("LOAN_TYPE: ", loan_type, "\nLOAN_AMOUNT: ", loan_amount, "\nLOAN_TERM: ", loan_term)
         loan = Loan.objects.create(
             customer=request.user,
             loan_type=loan_type,
@@ -309,11 +329,32 @@ def loans(request):
     })
 
 @login_required
-def loan_detail(request, loan_id):
-    loan = Loan.objects.get(id=loan_id, customer=request.user)
+def loan_detail(request, pk):
+    loan = Loan.objects.get(id=pk, customer=request.user)
     return render(request, "dashboard/major/loan_detail.html", {'loan': loan})
 
 
+
+@login_required
+def confirm_loan_activation_payment(request, pk):
+    loan = Loan.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        receipt = request.FILES.get('receipt')
+        
+        if receipt:
+            # Assuming you have a field for the receipt in the Card model
+            loan.activation_receipt = receipt
+            loan.applied_for_activation = True
+            loan.save()
+            
+            messages.success(request, 'Payment confirmed! Your loan will be activated soon.')
+        else:
+            messages.error(request, 'Please upload a valid receipt.')
+        
+        return redirect('loan_detail', pk=loan.id)
+
+    return render(request, 'dashboard/major/loan_detail.html', {'loan': loan})
 
 
 @login_required
@@ -360,7 +401,7 @@ def update_personal_info(request):
 def update_address_info(request):
     if request.method == 'POST':
         user = request.user
-        user.address = request.POST.get('street_address')
+        user.address = request.POST.get('address')
         user.city = request.POST.get('city')
         user.state = request.POST.get('state')
         user.postal_code = request.POST.get('postal_code')
@@ -374,16 +415,22 @@ def update_password(request):
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
+
+        print(new_password)
+        print(confirm_password)
         
         if new_password != confirm_password:
+            print("New passwords do not match.")
             return JsonResponse({'error': 'New passwords do not match.'}, status=400)
         
         if not request.user.check_password(old_password):
+            print("Current password is incorrect.")
             return JsonResponse({'error': 'Current password is incorrect.'}, status=400)
         
         request.user.set_password(new_password)
         request.user.save()
         update_session_auth_hash(request, request.user)  # Prevents logging out after password change
+        print("Password updated successfully.")
         return JsonResponse({'message': 'Password updated successfully.'})
     return JsonResponse({'error': 'Invalid request.'}, status=400)
 

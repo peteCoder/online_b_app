@@ -46,7 +46,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to="profile/images", blank=True, null=True)
 
 
-    address = models.TextField(blank=False)  # Required
+    address = models.TextField(blank=True, null=True)  # Required
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     postal_code = models.CharField(max_length=100, blank=True, null=True)
@@ -56,6 +56,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     front_id_image = models.ImageField(upload_to="identity/images", blank=True, null=True)
     back_id_image = models.ImageField(upload_to="identity/images", blank=True, null=True)
+
+
 
 
 
@@ -296,12 +298,17 @@ class Loan(models.Model):
     due_date = models.DateTimeField()
     is_paid = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
-        self.interest = (self.amount * self.interest_rate * self.loan_term) / 100
-        self.repayment_amount = self.amount + self.interest
-        self.due_date = timezone.now() + timedelta(days=self.loan_term * 30)  # approx. due in months
-        super().save(*args, **kwargs)
+    activation_receipt = models.ImageField(upload_to='receipts/', null=True, blank=True)
+    activated = models.BooleanField(default=False)
+    applied_for_activation = models.BooleanField(default=False)
 
+
+    def save(self, *args, **kwargs):
+        self.interest = (float(self.amount) * float(self.interest_rate) * float(self.loan_term)) / 100
+        self.repayment_amount = float(self.amount) + float(self.interest)
+        self.due_date = timezone.now() + timedelta(days=int(self.loan_term) * 30)  # approx. due in months
+        super().save(*args, **kwargs)
+ 
     def __str__(self):
         return f"Loan for {self.customer.email} - {self.amount}"
     

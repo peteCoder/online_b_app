@@ -19,3 +19,5 @@ echo "Collect static..."
 python3 manage.py collectstatic --noinput --clear
 
 echo "Build process completed!"
+
+

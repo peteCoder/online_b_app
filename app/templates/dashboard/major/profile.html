@@ -132,7 +132,7 @@
                 document.getElementById('success-message').style.display = 'none';
             }
         } catch (error) {
-            document.getElementById('error-message').innerText = "Error updating profile. Please try again.";
+            document.getElementById('error-message').innerText = data.message || "Error updating profile. Please try again.";
             document.getElementById('error-message').style.display = 'block';
             document.getElementById('success-message').style.display = 'none';
         }

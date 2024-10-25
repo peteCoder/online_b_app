@@ -6,9 +6,8 @@
     <div class="container-fluid p-0">
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-5">
             <h1 class="h3"><strong>Loans</strong></h1>
-            {% if loan_count < 3 %}
-            <a href="{% url 'create_loan' %}" class="btn btn-primary">Apply for Loan</a>
-            {% endif %}
+            {% if loan_count < 3 %} <a href="{% url 'create_loan' %}" class="btn btn-primary">Apply for Loan</a>
+                {% endif %}
         </div>
 
         <div class="row">
@@ -23,6 +22,7 @@
                                         <th>Status</th>
                                         <th>Principal</th>
                                         <th>Months</th>
+                                        <th>Percentage</th>
                                         <th>Interest</th>
                                         <th>Repayment Amount</th>
                                     </tr>
@@ -40,10 +40,12 @@
                                         </td>
                                         <td>₦{{ loan.amount }}</td>
                                         <td>{{ loan.loan_term }}</td>
+                                        <td>{{ loan.interest_rate }}%</td>
                                         <td>₦{{ loan.interest }}</td>
                                         <td>₦{{ loan.repayment_amount }}</td>
                                         <td>
-                                            <a href="{% url 'loan_detail' loan.id %}" class="btn btn-info btn-sm">Details</a>
+                                            <a href="{% url 'loan_detail' loan.id %}"
+                                                class="btn btn-info btn-sm">Details</a>
                                         </td>
                                     </tr>
                                     {% endfor %}

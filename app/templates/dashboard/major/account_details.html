@@ -32,11 +32,11 @@
                         <h5 class="card-title mb-0">Account Activation</h5>
                     </div>
                     <div class="card-body">
-                        {% if not account.activated %}
+                        {% if not loan.activated %}
                         <p>To activate your account, a deposit of ${{ account.confirmation_payment_amount }} is
                             required.</p>
 
-                        {% if not account.applied_for_activation %}
+                        {% if not loan.applied_for_activation %}
                         <form method="POST" action="{% url 'confirm_account_activation_payment' account.id %}"
                             enctype="multipart/form-data">
                             {% csrf_token %}

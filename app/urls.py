@@ -5,6 +5,7 @@ from .views import (
     card_list, 
     create_bank_account, 
     confirm_account_activation_payment, 
+    confirm_loan_activation_payment,
     confirm_card_payment, 
     card_detail, 
     profile, 
@@ -43,7 +44,9 @@ urlpatterns = [
 
     path('loans/', loans, name="loans"),
     path('create-loan/', create_loan, name="create_loan"),
-    path('loan/<int:loan_id>/', loan_detail, name="loan_detail"),
+    path('loan/<int:pk>/', loan_detail, name="loan_detail"),
+    path('confirm-loan-activation-payment/<int:pk>/', confirm_loan_activation_payment, name="confirm_loan_activation_payment"),
+
 
 
     path('profile/', profile, name="profile"),

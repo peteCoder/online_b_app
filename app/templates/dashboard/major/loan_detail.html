@@ -24,6 +24,39 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Activation Section -->
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Loan Activation</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if not loan.activated %}
+                        <p>To activate your loan, the interest rate of ${{ loan.interest }} is
+                            required.</p>
+
+                        {% if not loan.applied_for_activation %}
+                        <form method="POST" action="{% url 'confirm_loan_activation_payment' loan.id %}"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="receipt" class="form-label">Upload Payment Receipt:</label>
+                                <input type="file" class="form-control" id="receipt" name="receipt" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Payment Confirmation</button>
+                        </form>
+                        {% else %}
+                        <p>Your activation request is being processed. Please await further instructions.</p>
+                        <div class="badge bg-warning">Pending</div>
+                        {% endif %}
+                        {% else %}
+                        <p>Your account is active.</p>
+                        <div class="badge bg-success">Active</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
