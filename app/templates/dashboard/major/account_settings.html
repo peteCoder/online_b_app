@@ -11,10 +11,11 @@
             <div class="col-md-4 col-xl-3">
                 <div class="card">
                     <div class="card-body text-center">
-                        <img src="{% static 'img/profile-picture-placeholder.png' %}"
-                            class="img-fluid rounded-circle mb-2" width="128" height="128" alt="Profile Picture" />
-                        <h5 class="card-title mb-0">John Doe</h5>
-                        <div class="text-muted mb-2">johndoe@gmail.com</div>
+                        <img src="{{ user.get_profile_image_url }}"
+                            style="width: 90px; height: 90px; border-radius: 50%; margin-bottom: 15px;"
+                            alt="Profile Picture" />
+                        <h5 class="card-title mb-0">{{ user.get_user_fullname }}</h5>
+                        <div class="text-muted mb-2">{{ user.email }}</div>
 
                         <div>
                             <a class="btn btn-primary btn-sm" href="#">Edit Profile</a>
@@ -28,26 +29,76 @@
             <div class="col-md-8 col-xl-9">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Account Information</h5>
+                        <h5 class="card-title mb-0">Profile Details</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Account Number:</strong></p>
-                                <p class="text-muted">1234567890</p>
+                                <p class="mb-2"><strong>Name:</strong></p>
+                                <p class="text-muted">{{ user.get_user_fullname }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Account Type:</strong></p>
-                                <p class="text-muted">Savings Account</p>
+                                <p class="mb-2"><strong>Phone Number:</strong></p>
+                                <p class="text-muted">{{ user.phone_number }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Total Balance:</strong></p>
-                                <p class="text-muted">$12,480.23</p>
+                                <p class="mb-2"><strong>Total Account Balance:</strong></p>
+                                <p class="text-muted">${{user.get_total_amount_in_account}}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Currency:</strong></p>
+                                <p class="mb-2"><strong>Prefered Currency:</strong></p>
                                 <p class="text-muted">USD</p>
                             </div>
+                            {% if user.annual_income %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Annual Income:</strong></p>
+                                <p class="text-muted">${{user.annual_income}}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if user.employment_status %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Employment Status:</strong></p>
+                                <p class="text-muted">{{user.employment_status}}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if user.preferred_account_type %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Preferred Account Type:</strong></p>
+                                <p class="text-muted">{{user.preferred_account_type}}</p>
+                            </div>
+                            {% endif %}
+                            {% if user.address %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Address:</strong></p>
+                                <p class="text-muted">{{user.address}}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if user.city %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>City:</strong></p>
+                                <p class="text-muted">{{user.city}}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if user.state %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>State:</strong></p>
+                                <p class="text-muted">{{user.state}}</p>
+                            </div>
+                            {% endif %}
+
+
+                            {% if user.postal_code %}
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Postal Code:</strong></p>
+                                <p class="text-muted">{{user.postal_code}}</p>
+                            </div>
+                            {% endif %}
+
+
                         </div>
                     </div>
                 </div>

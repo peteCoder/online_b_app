@@ -36,6 +36,11 @@
                         <p>To activate your loan, the interest rate of ${{ loan.interest }} is
                             required.</p>
 
+                            <div class="">
+                                <!-- Here are the bank Details -->
+                                {% include 'dashboard/_components/_bank_info.html' %}
+                            </div>
+
                         {% if not loan.applied_for_activation %}
                         <form method="POST" action="{% url 'confirm_loan_activation_payment' loan.id %}"
                             enctype="multipart/form-data">

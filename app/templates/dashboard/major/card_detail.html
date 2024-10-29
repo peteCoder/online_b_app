@@ -14,10 +14,17 @@
                         <h5 class="card-title mb-0">Card Information</h5>
                     </div>
                     <div class="card-body">
+                        {% if card.activated %}
                         <p><strong>Card Type:</strong> {{ card.card_type }}</p>
                         <p><strong>Card Number:</strong> {{ card.card_number }}</p>
                         <p><strong>CVV:</strong> {{ card.cvv }}</p>
                         <p><strong>Exp. Date:</strong> {{ card.expiration_date }}</p>
+                        {% else %}
+                        <p><strong>Card Type:</strong> ******************</p>
+                        <p><strong>Card Number:</strong> ******************</p>
+                        <p><strong>CVV:</strong> ***</p>
+                        <p><strong>Exp. Date:</strong> {{ card.expiration_date }}</p>
+                        {% endif %}
                         <p><strong>Active:</strong>
                             <span class="badge {% if card.activated %} bg-success {% else %} bg-danger {% endif %}">
                                 {% if card.activated %}
@@ -45,18 +52,12 @@
 
                         <!-- Account details with copy button -->
                         {% if not card.applied_for_activation %}
-                        <div class="mb-3">
-                            <p><strong>Bank Account Details:</strong></p>
-                            <p>
-                                <strong>Account Name:</strong> XYZ Bank<br>
-                                <strong>Account Number:</strong>
-                                <span id="account-number">1234567890</span>
-                                <button id="copy-btn" class="btn btn-sm btn-outline-secondary">
-                                    Copy
-                                </button><br>
-                                <strong>Bank Name:</strong> ABC Bank
-                            </p>
+
+                        <div class="">
+                            <!-- Here are the bank Details -->
+                            {% include 'dashboard/_components/_bank_info.html' %}
                         </div>
+
 
                         <!-- Payment confirmation form -->
                         <form method="POST" enctype="multipart/form-data"

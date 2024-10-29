@@ -71,6 +71,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
 
+    @property
+    def get_profile_image_url(self):
+        if self.profile_image.url:
+            return self.profile_image.url
+        else:
+            # Change this later
+            return 'http://localhost:8000/static/static/img/avatars/avatar-5.jpg'
+        
+    @property
+    def get_user_fullname(self):
+        return str(self.first_name).capitalize() + " " + str(self.last_name).capitalize()
+
+
     def __str__(self):
         return self.email
     
@@ -184,7 +197,7 @@ class Account(models.Model):
         verbose_name_plural = "Accounts"
         verbose_name = "Account"
 
-        
+
 
 class Transaction(models.Model):
     TRANSACTION_TYPES = (
@@ -340,5 +353,45 @@ class Transfer(models.Model):
     class Meta:
         verbose_name_plural = "Transfer"
         verbose_name = "Transfer"
+
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    title = models.CharField(max_length=200, blank=False, null=False)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.email} - {self.title}"
+
+    class Meta:
+        verbose_name_plural = "Notification"
+        verbose_name = "Notifications"
+
+
+class Support(models.Model):
+    STATUS = [
+        ("Pending", "Pending"),
+        ("Fulfilled", "Fulfilled"),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    subject = models.CharField(max_length=400, blank=True, null=False)
+    description = models.TextField(max_length=400, blank=True, null=False)
+    image = models.FileField(upload_to='support/images/', null=True, blank=True)
+    status = models.CharField(max_length=400, blank=True, null=False, choices=STATUS, default="Pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Support"
+        verbose_name = "Support"
+
+    def __str__(self):
+        return f"Support for {self.user.email} - {self.subject}"
+
+
+
+
 
 

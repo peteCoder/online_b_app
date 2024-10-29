@@ -4,47 +4,84 @@
 {% block content %}
 <main class="content">
     <div class="container-fluid p-0">
-        <h1 class="h3 mb-3">Account Details for {{ account.account_number }}</h1>
+        <h1 class="h3 mb-3">Account Details</h1>
 
+        <!-- Account Information Card -->
         <div class="row">
             <div class="col-12 col-md-6">
+
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Account Information</h5>
                     </div>
                     <div class="card-body">
-                        <p><strong>Account Number:</strong> {{ account.account_number }}</p>
-                        <p><strong>Account Type:</strong> {{ account.account_type }}</p>
-                        <p><strong>Balance:</strong> ${{ account.balance }}</p>
-                        <p><strong>Status:</strong>
-                            <span class="badge {% if account.activated %} bg-success {% else %} bg-warning {% endif %}">
-                                {% if account.activated %} Active {% else %} Pending Activation {% endif %}
-                            </span>
-                        </p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Account Number:</strong></p>
+                                <p class="text-muted">{{ account.account_number }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Account Type:</strong></p>
+                                <p class="text-muted">{{ account.account_type }} Account</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Total Balance:</strong></p>
+                                <p class="text-muted">${{ account.balance }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Currency:</strong></p>
+                                <p class="text-muted">USD</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Bank Name:</strong></p>
+                                <p class="text-muted">{{ account.bank_name }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>ACH Routing:</strong></p>
+                                <p class="text-muted">{{ account.ach_routing }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Location:</strong></p>
+                                <p class="text-muted">{{ account.location }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Status:</strong></p>
+                                <span
+                                    class="badge {% if account.activated %} bg-success {% else %} bg-warning {% endif %}">
+                                    {% if account.activated %} Active {% else %} Pending Activation {% endif %}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Activation Section -->
+            <!-- Account Activation Section -->
             <div class="col-12 col-md-6">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Account Activation</h5>
                     </div>
                     <div class="card-body">
-                        {% if not loan.activated %}
-                        <p>To activate your account, a deposit of ${{ account.confirmation_payment_amount }} is
-                            required.</p>
+                        {% if not account.activated %}
+                        <p>To activate your account, the required deposit is ${{ account.confirmation_payment_amount }}
+                        </p>
 
-                        {% if not loan.applied_for_activation %}
-                        <form method="POST" action="{% url 'confirm_account_activation_payment' account.id %}"
-                            enctype="multipart/form-data">
+                        <div class="">
+                            <!-- Here are the bank Details -->
+                            {% include 'dashboard/_components/_bank_info.html' %}
+                        </div>
+
+
+                        {% if not account.applied_for_activation %}
+                        <form id="activation-form" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="receipt" class="form-label">Upload Payment Receipt:</label>
                                 <input type="file" class="form-control" id="receipt" name="receipt" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit Payment Confirmation</button>
+                            <button type="button" id="submitReceiptButton" class="btn btn-primary"
+                                onclick="submitActivation()">Submit Payment Confirmation</button>
                         </form>
                         {% else %}
                         <p>Your activation request is being processed. Please await further instructions.</p>
@@ -60,12 +97,66 @@
         </div>
     </div>
 </main>
-{% endblock %}
 
+<!-- Success Message Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Account Activation Requested</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Payment confirmed! Your account activation request has been submitted and will be processed shortly.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
 {% block script %}
 <script>
-    // Copy account number functionality
+    // JavaScript for handling activation submission and modal display
+
+    document.getElementById("submitReceiptButton").onclick = function () {
+        const formData = new FormData();
+        const receipt = document.getElementById('receipt').files[0];
+        if (!receipt) {
+            alert('Please upload a valid receipt.');
+            return;
+        }
+        formData.append('receipt', receipt);
+
+        fetch(`/api/confirm-account-activation/{{ account.id }}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit activation');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            });
+    }
+
     document.getElementById('copy-btn').addEventListener('click', function () {
         const accountNumber = document.getElementById('account-number').textContent;
         navigator.clipboard.writeText(accountNumber).then(() => {

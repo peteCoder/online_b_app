@@ -5,6 +5,9 @@ from rest_framework import status
 
 from .helpers import check_email, is_valid_password
 
+from rest_framework.views import APIView
+
+
 
 from django.shortcuts import render
 from app.models import Account, Transaction, Loan
@@ -16,6 +19,13 @@ from django.utils import timezone
 from collections import defaultdict
 import calendar
 from django.db.models.functions import ExtractMonth
+
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from app.models import Support
+from .serializers import SupportSerializer, AccountActivationSerializer
 
 
 User = get_user_model()
@@ -99,5 +109,34 @@ def create_user(request):
                 }, status=status.HTTP_400_BAD_REQUEST)
             
     return Response({"message": "This is working"})
+
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_support_request(request):
+    serializer = SupportSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def ConfirmAccountActivationAPIView(request, pk):
+
+    receipt = request.FILES.get("receipt")
+    try:
+        account = Account.objects.get(id=pk, customer=request.user)
+        print("Account: ", account.id)
+    except Account.DoesNotExist:
+        return Response({'error': 'Account not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    account.receipt = receipt
+    account.applied_for_activation = True
+    account.save()
+    return Response({'success': 'Payment confirmed! Your account will be activated soon.'}, status=status.HTTP_200_OK)
 
 

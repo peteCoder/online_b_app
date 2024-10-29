@@ -22,7 +22,7 @@ from .views import (
     accounts_list, 
     transactions, 
     chartpage, validate_transfer, confirm_transfer,
-    update_personal_info, update_address_info, update_password
+    update_personal_info, update_address_info, update_password, settings
 
 )
 urlpatterns = [
@@ -66,6 +66,10 @@ urlpatterns = [
 
     path('validate-transfer/', validate_transfer, name="validate_transfer"),
     path('confirm-transfer/', confirm_transfer, name="confirm_transfer"),
+
+
+
+    path('settings/', settings, name="settings"),
 
 
 

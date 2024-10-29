@@ -2,7 +2,7 @@ import json
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
-from .models import Account, Transaction, Loan, Card, Transfer
+from .models import Account, Transaction, Loan, Card, Transfer, Notification, Support
 
 from django.http import JsonResponse
 
@@ -56,6 +56,11 @@ def home(request):
     # user = User.objects.filter(email=request.user.email).first()
     # print(user.email)
 
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+
+
     user = request.user
 
     if not user.is_authenticated:
@@ -87,7 +92,7 @@ def home(request):
     savings_data = get_monthly_transactions('SAVINGS', current_year, user)
     months_data = list(calendar.month_abbr[1:])
 
-    all_transactions = Transaction.objects.all()
+    all_transactions = Transaction.objects.filter(user=request.user)
 
     loan_amounts = [float(loan.amount) for loan in Loan.objects.all()]
 
@@ -101,6 +106,9 @@ def home(request):
     
 
     return render(request, "dashboard/major/index.html", {
+
+        "notifications": notifications,
+        "notification_count": notifications.count(),
 
         'accounts': accounts,
         "loan": loans.first(),
@@ -119,6 +127,8 @@ def home(request):
         'months_data': json.dumps(months_data),
 
 
+
+
     })
 
 
@@ -132,6 +142,10 @@ def LogoutView(request):
 def main_home(request):
     accounts = Account.objects.all()
 
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+
     account_model_meta = {
         'model_name': Account._meta.model_name,  # Account model name
         'app_label': Account._meta.app_label,    # App name
@@ -140,6 +154,8 @@ def main_home(request):
     return render(request, "main/index.html", {
         'accounts': accounts,
         "account_model_meta": account_model_meta,
+        "notifications": notifications,
+        "notification_count": notifications.count(),
     })
 
 
@@ -200,16 +216,22 @@ def chartpage(request):
 
 @login_required
 def transactions(request):
-    transaction_records = Transaction.objects.all()
-    return render(request, "dashboard/major/transactions.html", {"transactions": transaction_records})
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+    transaction_records = Transaction.objects.filter(user=request.user)
+    return render(request, "dashboard/major/transactions.html", {"transactions": transaction_records, "notifications": notifications, "notification_count": notifications.count(),})
 
 @login_required
 def transfer_funds(request):
-    transaction_records = Transaction.objects.all()
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+    transaction_records = Transaction.objects.filter(user=request.user)
     accounts = Account.objects.filter(customer=request.user, activated=True)
     
     
-    return render(request, "dashboard/major/transfer_funds.html", {'accounts': accounts})
+    return render(request, "dashboard/major/transfer_funds.html", {"notification_count": notifications.count(), 'accounts': accounts, "notifications": notifications})
 
 
 @csrf_exempt
@@ -236,6 +258,10 @@ def validate_transfer(request):
 
 @csrf_exempt
 def confirm_transfer(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    # Continue from read notification count
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     if request.method == 'POST':
         data = json.loads(request.body)
         user = request.user
@@ -297,6 +323,9 @@ def confirm_transfer(request):
 
 @login_required
 def create_loan(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     if request.method == 'POST':
 
         # loan amount: 2000
@@ -314,29 +343,39 @@ def create_loan(request):
             amount=loan_amount,
             loan_term=loan_term
         )
-        return redirect('loan_detail', loan_id=loan.id)
+        return redirect('loan_detail', pk=loan.id)
 
-    return render(request, "dashboard/major/loan_create.html", {})
+    return render(request, "dashboard/major/loan_create.html", {"notifications": notifications, "notification_count": notifications.count(),})
 
 @login_required
 def loans(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     user_loans = Loan.objects.filter(customer=request.user)
     loan_count = user_loans.count()
     
     return render(request, "dashboard/major/loan.html", {
         'loans': user_loans,
-        'loan_count': loan_count
+        'loan_count': loan_count,
+        "notifications": notifications
     })
 
 @login_required
 def loan_detail(request, pk):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     loan = Loan.objects.get(id=pk, customer=request.user)
-    return render(request, "dashboard/major/loan_detail.html", {'loan': loan})
+    return render(request, "dashboard/major/loan_detail.html", {'loan': loan, "notifications": notifications, "notification_count": notifications.count(),})
 
 
 
 @login_required
 def confirm_loan_activation_payment(request, pk):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     loan = Loan.objects.get(id=pk)
     
     if request.method == 'POST':
@@ -354,12 +393,15 @@ def confirm_loan_activation_payment(request, pk):
         
         return redirect('loan_detail', pk=loan.id)
 
-    return render(request, 'dashboard/major/loan_detail.html', {'loan': loan})
+    return render(request, 'dashboard/major/loan_detail.html', {'loan': loan, "notifications": notifications, "notification_count": notifications.count(),})
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def profile(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     # if request.method == "POST":
     #     # Get user profile data from the request
     #     first_name = request.POST.get("first_name")
@@ -382,7 +424,7 @@ def profile(request):
     #     user.save()
 
     #     return JsonResponse({"message": "Profile updated successfully"}, status=200)
-    return render(request, "dashboard/major/profile.html", {})
+    return render(request, "dashboard/major/profile.html", {"notifications": notifications, "notification_count": notifications.count(),})
 
 
 @login_required
@@ -438,10 +480,18 @@ def update_password(request):
 
 @login_required
 def support_page(request):
-    return render(request, "dashboard/major/support_page.html", {})
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+    supports = Support.objects.filter(user=request.user).order_by("-id")[:5]
+    return render(request, "dashboard/major/support_page.html", {"supports": supports,"notifications": notifications, "notification_count": notifications.count(),})
 
 @login_required
 def account_details(request, pk):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+
     user = request.user
     try:
         account = Account.objects.get(pk=pk)
@@ -455,25 +505,34 @@ def account_details(request, pk):
         "dashboard/major/account_details.html", 
         {
             "account": account, 
-            "transactions": transactions
+            "transactions": transactions,
+            "notifications": notifications,
+            "notification_count": notifications.count(),
         }
     )
 
 
 @login_required
 def accounts_list(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
 
-    accounts = Account.objects.all()
+
+    accounts = Account.objects.filter(customer=request.user)
 
     account_count = accounts.count()
 
-    return render(request, "dashboard/major/account_list.html", {"accounts": accounts, 'account_count': account_count})
+    return render(request, "dashboard/major/account_list.html", {"accounts": accounts, 'account_count': account_count, "notifications": notifications, "notification_count": notifications.count(),})
 
 
 @login_required
 def create_bank_account(request):
     user = request.user
     existing_account_types = Account.objects.filter(customer=user).values_list('account_type', flat=True)
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+
     account_types_to_create = [
         ('CHECKING', 'Checking'),
         ('SAVINGS', 'Savings'),
@@ -527,12 +586,17 @@ def create_bank_account(request):
     return render(request, "dashboard/major/create_account.html", {
         'existing_account_types': existing_account_types,
         'account_types_to_create': account_types_to_create,
+        "notifications": notifications,
+        "notification_count": notifications.count(),
     })
 
 
 @login_required
 def confirm_account_activation_payment(request, pk):
     account = Account.objects.get(id=pk)
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     
     if request.method == 'POST':
         receipt = request.FILES.get('receipt')
@@ -549,22 +613,34 @@ def confirm_account_activation_payment(request, pk):
         
         return redirect('accounts_detail', pk=account.id)
 
-    return render(request, 'dashboard/major/create_account.html', {'account': account})
+    return render(request, 'dashboard/major/account_detail.html', {'account': account, "notifications": notifications, "notification_count": notifications.count(),})
 
 
 @login_required
 def card_list(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+
     cards = Card.objects.filter(user=request.user)
-    return render(request, 'dashboard/major/card_list.html', {'cards': cards})
+    card_count = cards.count()
+    return render(request, 'dashboard/major/card_list.html', {'card_count': card_count,'cards': cards, "notifications": notifications, "notification_count": notifications.count(),})
 
 @login_required
 def card_detail(request, pk):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
     card = Card.objects.get(pk=pk)
-    return render(request, 'dashboard/major/card_detail.html', {'card': card})
+    return render(request, 'dashboard/major/card_detail.html', {'card': card, "notifications": notifications, "notification_count": notifications.count(),})
 
 
 @login_required
 def confirm_card_payment(request, pk):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+    
     card = Card.objects.get(id=pk)
     
     if request.method == 'POST':
@@ -582,11 +658,16 @@ def confirm_card_payment(request, pk):
         
         return redirect('card_detail', pk=card.id)
 
-    return render(request, 'dashboard/major/create_card.html', {'card': card})
+    return render(request, 'dashboard/major/create_card.html', {'card': card, "notifications": notifications, "notification_count": notifications.count(),})
 
 
 @login_required
 def create_card(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+    
+
     # Get the types of cards the user hasn't created yet
     existing_card_types = Card.objects.filter(user=request.user).values_list('card_type', flat=True)
     available_card_types = [card for card in ['MasterCard', 'Verve', 'Visa'] if card not in existing_card_types]
@@ -609,4 +690,19 @@ def create_card(request):
         return JsonResponse({'message': 'Card created successfully!', 'card_id': card.id})
     
 
-    return render(request, 'dashboard/major/create_card.html', {'available_card_types': available_card_types})
+    return render(request, 'dashboard/major/create_card.html', {'available_card_types': available_card_types, "notifications": notifications, "notification_count": notifications.count(),})
+
+
+# @login_required
+def settings(request):
+    transactions = Transaction.objects.filter(user=request.user)
+
+    return render(request, 'dashboard/major/account_settings.html', {"transactions": transactions})
+
+
+
+
+
+
+
+
