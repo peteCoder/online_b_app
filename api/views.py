@@ -3,11 +3,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+
 from .helpers import check_email, is_valid_password
 
 from rest_framework.views import APIView
 
-
+from django.contrib.auth import authenticate, login
 
 from django.shortcuts import render
 from app.models import Account, Transaction, Loan
@@ -26,9 +29,98 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.models import Support
 from .serializers import SupportSerializer, AccountActivationSerializer
+from app.models import CustomUser
+from django.contrib import messages
+
+from django.conf import settings
+
 
 
 User = get_user_model()
+
+class RegisterAPIView(APIView):
+    def post(self, request):
+        required_fields = [
+            'first_name', 'last_name', 'email', 'phone_number', 'ssn',
+            'annual_income', 'employment_status', 'preferred_account_type',
+            'profile_image', 'front_id_image', 'back_id_image',
+            'password', 'password_confirmation'
+        ]
+
+        email = request.data.get("email")
+
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            return Response({"error": "User with email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for missing fields
+        missing_fields = [field for field in required_fields if field not in request.data]
+        if missing_fields:
+            return Response(
+                {"error": f"Missing fields: {', '.join(missing_fields)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check for password confirmation match
+        if request.data['password'] != request.data['password_confirmation']:
+            return Response({"error": "Passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create the user
+        try:
+            user = CustomUser.objects.create_user(
+                first_name=request.data['first_name'],
+                last_name=request.data['last_name'],
+                email=request.data['email'],
+                phone_number=request.data['phone_number'],
+                ssn=request.data['ssn'],
+                annual_income=request.data['annual_income'],
+                employment_status=request.data['employment_status'],
+                preferred_account_type=request.data['preferred_account_type'],
+                profile_image=request.FILES.get('profile_image'),
+                front_id_image=request.FILES.get('front_id_image'),
+                back_id_image=request.FILES.get('back_id_image'),
+                password=request.data['password']
+            )
+            # self.send_registration_email(user)
+            return Response({"message": "User registered successfully. Check your email for details."}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def send_registration_email(self, user):
+        subject = "Your Registration Details"
+        message = f"Hello {user.get_user_fullname},\n\nYour bank account has been successfully created. Your Bank ID is {user.bank_id} and your password is as you set it during registration.\n\nThank you for joining us!"
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
+
+
+@api_view(['POST'])
+def login_with_bank_id_api(request):
+    bank_id = request.data.get('bank_id')
+    password = request.data.get('password')
+
+    try:
+        user = CustomUser.objects.get(bank_id=bank_id)
+        user = authenticate(request, email=user.email, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login successful!")
+            # Change the redirect url here if you change the dashboard
+            return Response({'message': 'Login successful', 'redirect_url': '/'}, status=status.HTTP_200_OK)
+        else:
+            messages.success(request, "Invalid credentials")
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 def get_monthly_transactions(account_type, year, user):
     transactions = Transaction.objects.filter(

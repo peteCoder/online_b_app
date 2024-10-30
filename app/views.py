@@ -56,8 +56,7 @@ def home(request):
     # user = User.objects.filter(email=request.user.email).first()
     # print(user.email)
 
-    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
-    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+   
 
 
 
@@ -65,6 +64,9 @@ def home(request):
 
     if not user.is_authenticated:
         return redirect("login")
+    
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
 
     
 
@@ -163,19 +165,23 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard_home")
 
-    if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+    # if request.method == "POST":
+    #     email = request.POST.get("email")
+    #     password = request.POST.get("password")
         
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "Login successful!")
-            return redirect('dashboard_home')  # Change to your dashboard page
-        else:
-            messages.error(request, "Invalid email or password.")
+    #     user = authenticate(request, email=email, password=password)
+    #     if user is not None:
+    #         login(request, user)
+    #         messages.success(request, "Login successful!")
+    #         return redirect('dashboard_home')  # Change to your dashboard page
+    #     else:
+    #         messages.error(request, "Invalid email or password.")
     
     return render(request, "main/pages-sign-in.html", {})
+
+
+def welcome_to_check_your_mail(request):
+    return render(request, "main/check_email_upon_signin.html", {})
 
 
 
@@ -183,29 +189,27 @@ def register(request):
     if request.user.is_authenticated:
         return redirect("dashboard_home")
     
+    # if request.method == 'POST':
+    #     print(request.POST)  # Print the POST data to confirm what's being submitted
+    #     print(request.FILES)
+    #     form = SignupForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         form.save()
+    #         messages.success(request, 'Account created successfully! Please log in.')
+    #         return redirect('login')
+    #     else:
+    #         # This will print the actual form validation errors to the terminal
 
-    
-    if request.method == 'POST':
-        print(request.POST)  # Print the POST data to confirm what's being submitted
-        print(request.FILES)
-        form = SignupForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Account created successfully! Please log in.')
-            return redirect('login')
-        else:
-            # This will print the actual form validation errors to the terminal
+    #         for field in form:
+    #             print(f"{field.name}: {field.errors}")  # Print specific field errors
+    #         print("Form is not valid")
+    #         print(form.errors)  # Prints field-specific errors
+    #         print(form.non_field_errors())  # Prints non-field errors if any
+    #         messages.error(request, 'Please correct the error(s) below.')
+    # else:
+    #     form = SignupForm()
 
-            for field in form:
-                print(f"{field.name}: {field.errors}")  # Print specific field errors
-            print("Form is not valid")
-            print(form.errors)  # Prints field-specific errors
-            print(form.non_field_errors())  # Prints non-field errors if any
-            messages.error(request, 'Please correct the error(s) below.')
-    else:
-        form = SignupForm()
-
-    return render(request, "main/pages-sign-up.html", {'form': form})
+    return render(request, "main/pages-sign-up.html", {})
 
 
 

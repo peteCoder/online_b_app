@@ -8,7 +8,9 @@ from django.utils import timezone
 import random
 from datetime import datetime, timedelta
 
-
+import string
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -37,6 +39,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15, unique=True, blank=False)  # Required
     
     ssn = models.CharField(max_length=50, blank=False)  # Required
+
+    bank_id = models.CharField(max_length=10, unique=True, blank=True, null=True)
 
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -73,7 +77,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def get_profile_image_url(self):
-        if self.profile_image.url:
+        if self.profile_image:
             return self.profile_image.url
         else:
             # Change this later
@@ -101,7 +105,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = "User"
 
 
-
+# Signal to generate a unique bank_id after user creation
+@receiver(post_save, sender=CustomUser)
+def generate_unique_bank_id(sender, instance, created, **kwargs):
+    if created and not instance.bank_id:
+        while True:
+            random_id = ''.join(random.choices(string.digits, k=10))
+            if not CustomUser.objects.filter(bank_id=random_id).exists():
+                instance.bank_id = random_id
+                instance.save()
+                break
 
 
 

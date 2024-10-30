@@ -22,7 +22,8 @@ from .views import (
     accounts_list, 
     transactions, 
     chartpage, validate_transfer, confirm_transfer,
-    update_personal_info, update_address_info, update_password, settings
+    update_personal_info, update_address_info, update_password, settings,
+    welcome_to_check_your_mail
 
 )
 urlpatterns = [
@@ -31,6 +32,10 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', LogoutView, name="logout"),
     path('register/', register, name="register"),
+    
+    path('welcome/', welcome_to_check_your_mail, name="welcome_to_check_your_mail"),
+
+
     path('chart/', chartpage, name="chartpage"),
 
     path('accounts/<int:pk>/', account_details, name="accounts_detail"),
