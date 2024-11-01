@@ -106,6 +106,10 @@ def login_with_bank_id_api(request):
     bank_id = request.data.get('bank_id')
     password = request.data.get('password')
 
+    # 0656312726
+
+    print(f"Details {bank_id} {password}")
+
     try:
         user = CustomUser.objects.get(bank_id=bank_id)
         user = authenticate(request, email=user.email, password=password)
