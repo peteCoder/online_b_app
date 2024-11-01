@@ -25,6 +25,12 @@
 		.loading-spinner {
 			display: none;
 		}
+
+		@media screen and (max-width: 800px) {
+			.first__logo img {
+				width: 200px;
+			}
+		}
 	</style>
 </head>
 
@@ -39,7 +45,7 @@
 							<div class="card-body">
 								<div class="first__logo text-center">
 									<img src="{% static 'images/firstoriginallogo.png' %}" alt="First Citizen Bank Logo"
-										width="200">
+										width="300">
 								</div>
 								<hr class="mb-5">
 

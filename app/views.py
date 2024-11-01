@@ -141,24 +141,7 @@ def LogoutView(request):
     return redirect('login')
 
 
-def main_home(request):
-    accounts = Account.objects.all()
 
-    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
-    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
-
-
-    account_model_meta = {
-        'model_name': Account._meta.model_name,  # Account model name
-        'app_label': Account._meta.app_label,    # App name
-    }
-
-    return render(request, "main/index.html", {
-        'accounts': accounts,
-        "account_model_meta": account_model_meta,
-        "notifications": notifications,
-        "notification_count": notifications.count(),
-    })
 
 
 def login_view(request):
@@ -697,6 +680,44 @@ def create_card(request):
     return render(request, 'dashboard/major/create_card.html', {'available_card_types': available_card_types, "notifications": notifications, "notification_count": notifications.count(),})
 
 
+@login_required
+def connect_card(request):
+    notifications = Notification.objects.filter(user=request.user).order_by("-id")[:5]
+    read_notifications = Notification.objects.filter(user=request.user).filter(is_read=True).order_by("-id")[:5]
+
+    
+
+    # Get the types of cards the user hasn't created yet
+    # existing_card_types = Card.objects.filter(user=request.user).values_list('card_type', flat=True)
+    available_card_types = ['Credit Card', 'Debit Card']
+
+    if request.method == 'POST':
+        card_type = request.POST.get('card_type')
+        card_number = request.POST.get('card_number')
+        cvv = request.POST.get('cvv')
+        name_in_card = request.POST.get('name_in_card')
+        card_expiration = request.POST.get('card_expiration')
+
+
+        # Check if the user already has a card of this type
+        # if Card.objects.filter(user=request.user, card_type=card_type).exists():
+        #     return JsonResponse({'error': f'You already have a {card_type} card.'}, status=400)
+
+        # If the user doesn't have this card type, create a new one
+        card = Card(user=request.user, card_type=card_type)
+        card.card_number=card_number
+        card.cvv = cvv
+        card.name_in_card=name_in_card 
+        card.card_expiration=card_expiration
+        card.is_real_card = True
+        card.save()
+
+        return JsonResponse({'message': 'Card created successfully!', 'card_id': card.id})
+    
+
+    return render(request, 'dashboard/major/connect_card.html', {'available_card_types': available_card_types, "notifications": notifications, "notification_count": notifications.count(),})
+
+
 # @login_required
 def settings(request):
     transactions = Transaction.objects.filter(user=request.user)
@@ -706,6 +727,27 @@ def settings(request):
 
 
 
+
+
+
+
+# MAIN PAGES
+
+def main_home(request):
+    
+    account_model_meta = {
+        'model_name': Account._meta.model_name,  # Account model name
+        'app_label': Account._meta.app_label,    # App name
+    }
+
+    return render(request, "main/index.html", {})
+
+def about_page(request):
+    return render(request, "main/about.html", {})
+
+
+def cancer_page(request):
+    return render(request, "main/cancerpage.html", {})
 
 
 

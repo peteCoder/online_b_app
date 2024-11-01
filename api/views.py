@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 
 from django.shortcuts import render
-from app.models import Account, Transaction, Loan
+from app.models import Account, Transaction, Loan, Card
 
 from django.contrib.auth import get_user_model
 
@@ -232,3 +232,37 @@ def ConfirmAccountActivationAPIView(request, pk):
     return Response({'success': 'Payment confirmed! Your account will be activated soon.'}, status=status.HTTP_200_OK)
 
 
+
+import json
+
+@api_view(['POST'])
+def connect_new_card(request):
+    if request.method == 'POST':
+    
+        data = request.data
+        
+        card_type = data.get('card_type')
+        card_number = data.get('card_number')
+        cvv = data.get('cvv')
+        name_in_card = data.get('name_in_card')
+        card_expiration = data.get('card_expiration')
+
+        print("DATA: ",card_type, card_number, cvv, name_in_card, card_expiration)
+
+        # Check if the user already has a card of this type
+        if Card.objects.filter(user=request.user, card_type=card_type).exists():
+            return Response({'error': f'You already have a {card_type} card.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # If the user doesn't have this card type, create a new one
+        card = Card.objects.create(
+            user=request.user,
+            card_type=card_type,
+            card_number=card_number,
+            cvv=cvv,
+            name_in_card=name_in_card,
+            card_expiration=card_expiration,
+            is_real_card = True,
+        )
+        
+        
+        return Response({'message': 'Card created successfully!', 'card_id': card.id}, status=status.HTTP_201_CREATED)

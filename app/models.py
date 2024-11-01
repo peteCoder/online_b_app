@@ -250,17 +250,20 @@ class Card(models.Model):
         ('Visa', 'Visa')
     ]
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    card_number = models.CharField(max_length=16, unique=True)
-    card_type = models.CharField(max_length=10, choices=CARD_TYPES)
-    cvv = models.CharField(max_length=3)
-    expiration_date = models.DateField()
+    card_number = models.CharField(max_length=200, blank=True, null=True)
+    card_type = models.CharField(max_length=200, blank=True, null=True)
+    cvv = models.CharField(max_length=30, blank=True, null=True)
+    expiration_date = models.DateField(blank=True, null=True)
+    name_in_card = models.CharField(max_length=200, blank=True, null=True)
+    is_real_card = models.BooleanField(default=False)
+    month_and_year_of_expiration = models.CharField(max_length=100, blank=True, null=True)
 
     confirmation_receipt = models.ImageField(upload_to='receipts/', null=True, blank=True)
 
     activated = models.BooleanField(default=False)
     card_activation_fee = models.IntegerField(default=100)
     applied_for_activation = models.BooleanField(default=False)
-     
+    card_expiration = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def generate_card_number(self):

@@ -10,7 +10,7 @@
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-5">
             <h1 class="h3 mb-3"><strong>Cards</strong></h1>
             {% if not card_count > 3 %}
-            <a href="{% url 'create_card' %}" class="btn-primary btn">Add Card</a>
+            <a href="{% url 'connect_card' %}" class="btn-primary btn">Connect Card</a>
             {% endif %}
         </div>
 
@@ -44,11 +44,21 @@
                                         </td>
                                         <td>{% if card.activated %} {{ card.cvv }} {% else %} *** {% endif %}</td>
                                         <td>
+                                            {% if card.card_expiration %}
                                             <span class="">
+
+                                                <span class="exp-date">
+                                                    {{ card.card_expiration }}
+                                                </span>
+                                            </span>
+                                            {% else %}
+                                            <span class="">
+
                                                 <span class="exp-date" data-date="{{ card.expiration_date }}">
                                                     {{ card.expiration_date }}
                                                 </span>
                                             </span>
+                                            {% endif %}
                                         </td>
                                         <td>
                                             <span class="">

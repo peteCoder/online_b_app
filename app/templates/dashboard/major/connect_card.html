@@ -29,8 +29,31 @@
                                 </select>
                                 <div id="message"></div>
                             </div>
+                            <div class="mb-3">
+                                <label for="card_number" class="form-label">Card Number: </label>
+                                <input type="number" required placeholder="i.e 5555669400322579" class="form-control"
+                                    id="card_number" name="card_number">
+                                <div id="message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name_in_card" class="form-label">Name on Card: </label>
+                                <input type="text" required placeholder="John Doe" class="form-control"
+                                    id="name_in_card" name="name_in_card">
+                                <div id="message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="card_expiration" class="form-label">Expiration time: </label>
+                                <input type="text" required placeholder="10/27" class="form-control"
+                                    id="card_expiration" name="card_expiration">
+                                <div id="message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cvv" class="form-label">CVV: </label>
+                                <input type="text" required placeholder="123" class="form-control" id="cvv" name="cvv">
+                                <div id="message"></div>
+                            </div>
 
-                            <button type="submit" class="btn btn-primary">Create Card</button>
+                            <button type="submit" class="btn btn-primary">Connect Card</button>
                         </form>
                     </div>
                 </div>
@@ -61,15 +84,33 @@
 <script>
     document.getElementById('createCardForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        const cardType = document.getElementById('card_type').value;
+        const card_type = document.getElementById('card_type').value;
+        const card_number = document.getElementById('card_number').value;
+        const cvv = document.getElementById('cvv').value;
+        const name_in_card = document.getElementById('name_in_card').value;
+        const card_expiration = document.getElementById('card_expiration').value;
 
-        fetch('{% url "create_card" %}', {
+        console.log({
+            card_type: card_type,
+            card_number: card_number,
+            cvv: cvv,
+            name_in_card: name_in_card,
+            card_expiration: card_expiration
+        })
+
+        fetch('{% url "connect_new_card" %}', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'X-CSRFToken': '{{ csrf_token }}',
             },
-            body: `card_type=${cardType}`
+            body: JSON.stringify({
+                card_type: card_type,
+                card_number: card_number,
+                cvv: cvv,
+                name_in_card: name_in_card,
+                card_expiration: card_expiration
+            })
         })
             .then(response => {
                 if (!response.ok) {
