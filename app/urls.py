@@ -27,7 +27,7 @@ from .views import (
     welcome_to_check_your_mail, about_page, cancer_page,
     personal_page,
     business, wealth, call_us, terms_services, 
-    routing_number
+    routing_number, privacy_security
 
 )
 urlpatterns = [
@@ -41,6 +41,7 @@ urlpatterns = [
     path('call-us/', call_us, name="call_us"),
     path('terms-services/', terms_services, name="terms_services"),
     path('routing-numbers/', routing_number, name="routing_number"),
+    path('privacy-security/', privacy_security, name="privacy_security"),
 
 
 

@@ -44,17 +44,16 @@
 
                     <div class="fcb-link-list__title">Support</div>
                     <div class="fcb-link-list__content fcb-rte">
-                        <p><a class="rte-link--is-list-link" href="https://locations.firstcitizens.com/"
-                                target="_blank">Locate Branch or <abbr>ATM</abbr></a>�&nbsp;</p>
-                        <p><a class="rte-link--is-list-link" href="/accessibility-statement"
-                                target="_self">Accessibility</a></p>
-                        <p><a class="rte-link--is-list-link" href="/support/routing-numbers" target="_self">Routing
+
+
+                        <p><a class="rte-link--is-list-link" href="{% url 'routing_number' %}" target="_self">Routing
                                 Number</a></p>
-                        <p><a class="rte-link--is-list-link" href="/privacy-security" target="_self">Privacy &amp;
+                        <p><a class="rte-link--is-list-link" href="{% url 'privacy_security' %}" target="_self">Privacy
+                                &amp;
                                 Security</a></p>
-                        <p><a class="ot-sdk-show-settings rte-link--is-list-link" href="#"><span
-                                    class="fcb-link-text">Your Privacy Choices</span></a> <span
-                                data-icon-id="sys-chevron-thick" class="fcb-rte_icon">icon:
+                        <p><a class="ot-sdk-show-settings rte-link--is-list-link"
+                                href="{% url 'privacy_security' %}"><span class="fcb-link-text">Your Privacy
+                                    Choices</span></a> <span data-icon-id="sys-chevron-thick" class="fcb-rte_icon">icon:
                                 sys-chevron-thick</span><span data-icon-id="ccpa" class="fcb-rte_icon">icon:
                                 ccpa</span></p>
                     </div>
@@ -102,11 +101,14 @@
 
                     <div class="fcb-link-list__title">Banking</div>
                     <div class="fcb-link-list__content fcb-rte">
-                        <p><a class="rte-link--is-list-link" href="/personal" target="_self">Personal</a></p>
-                        <p><a class="rte-link--is-list-link" href="/small-business" target="_self">Small
+                        <p><a class="rte-link--is-list-link" href="{% url 'main_home' %}" target="_self">Home</a>
+                        </p>
+                        <p><a class="rte-link--is-list-link" href="{% url 'personal_page' %}"
+                                target="_self">Personal</a></p>
+                        <p><a class="rte-link--is-list-link" href="{% url 'business' %}" target="_self">Small
                                 Business</a></p>
-                        <p><a class="rte-link--is-list-link" href="/commercial" target="_self">Commercial</a></p>
-                        <p><a class="rte-link--is-list-link" href="/wealth" target="_self">Wealth</a></p>
+
+                        <p><a class="rte-link--is-list-link" href="{% url 'wealth' %}" target="_self">Wealth</a></p>
                     </div>
                 </div>
 

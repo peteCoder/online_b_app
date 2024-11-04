@@ -770,6 +770,9 @@ def terms_services(request):
 def routing_number(request):
     return render(request, "main/routing_number.html", {})
 
+def privacy_security(request):
+    return render(request, "main/privacy_security.html", {})
+
 
 
 
