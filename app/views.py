@@ -749,6 +749,27 @@ def about_page(request):
 def cancer_page(request):
     return render(request, "main/cancerpage.html", {})
 
+def personal_page(request):
+    return render(request, "main/personal.html", {})
+
+
+def business(request):
+    return render(request, "main/business.html", {})
+
+
+def wealth(request):
+    return render(request, "main/wealth.html", {})
+
+def call_us(request):
+    return render(request, "main/call-us.html", {})
+
+
+def terms_services(request):
+    return render(request, "main/terms_services.html", {})
+
+def routing_number(request):
+    return render(request, "main/routing_number.html", {})
+
 
 
 

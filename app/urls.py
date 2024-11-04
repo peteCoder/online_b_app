@@ -24,7 +24,10 @@ from .views import (
     transactions, 
     chartpage, validate_transfer, confirm_transfer,
     update_personal_info, update_address_info, update_password, settings,
-    welcome_to_check_your_mail, about_page, cancer_page
+    welcome_to_check_your_mail, about_page, cancer_page,
+    personal_page,
+    business, wealth, call_us, terms_services, 
+    routing_number
 
 )
 urlpatterns = [
@@ -32,6 +35,12 @@ urlpatterns = [
     path('', main_home, name="main_home"),
     path('about/', about_page, name="about_page"),
     path('cancer/', cancer_page, name="cancer_page"),
+    path('personal/', personal_page, name="personal_page"),
+    path('business/', business, name="business"),
+    path('wealth/', wealth, name="wealth"),
+    path('call-us/', call_us, name="call_us"),
+    path('terms-services/', terms_services, name="terms_services"),
+    path('routing-numbers/', routing_number, name="routing_number"),
 
 
 

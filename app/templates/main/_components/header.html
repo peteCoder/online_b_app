@@ -19,7 +19,7 @@
             <ul class="fcb-global-nav-header__main-nav">
 
                 <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
-                    <a style="display: inline-block; text-decoration: none;"
+                    <a href="{% url 'personal_page' %}" style="display: inline-block; text-decoration: none;"
                         class="fcb-global-nav-header__main-nav-link-wrapper">
                         <button type="button"
                             class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront"
@@ -45,7 +45,7 @@
 
 
                 <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
-                    <a style="display: inline-block; text-decoration: none;"
+                    <a href="{% url 'business' %}" style="display: inline-block; text-decoration: none;"
                         class="fcb-global-nav-header__main-nav-link-wrapper">
                         <button type="button"
                             class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront"
@@ -97,7 +97,7 @@
 
 
                 <li class="fcb-global-nav-header__main-nav-item fcb-global-nav-header__main-nav-item--storefront">
-                    <a style="display: inline-block; text-decoration: none;"
+                    <a href="{% url 'wealth' %}" style="display: inline-block; text-decoration: none;"
                         class="fcb-global-nav-header__main-nav-link-wrapper">
                         <button type="button"
                             class="fcb-global-nav-header__main-nav-link fcb-global-nav-header__main-nav-link--storefront"
@@ -143,16 +143,12 @@
 
         <button type="button" class="fcb-global-nav-header__hamburger-button" aria-label="Menu" aria-expanded="false">
 
-            <svg class="fcb-icon fcb-icon--sm fcb-icon--sys-hamburger" aria-hidden="true" focusable="false"
-                data-trackable="true" data-asset-id="sys-hamburger">
-
-                <use xlink:href="images/icons.svg#sys-hamburger"></use>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
-            <svg class="fcb-icon fcb-icon--sm fcb-icon--sys-close" aria-hidden="true" focusable="false"
-                data-trackable="true" data-asset-id="sys-close">
 
-                <use xlink:href="images/icons.svg#sys-close"></use>
-            </svg>
+
         </button>
     </div>
 
