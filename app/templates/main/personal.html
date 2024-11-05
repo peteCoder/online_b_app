@@ -20,13 +20,25 @@
 
 </head>
 
-<body class="fcb-tpl-product-family fcb-tpl-side-nav"><iframe src="javascript:void(0)" title="" role="presentation"
+<body class="fcb-tpl-product-family fcb-tpl-side-nav">
+
+    <iframe src="javascript:void(0)" title="" role="presentation"
         style="width: 0px; height: 0px; border: 0px; display: none;"></iframe>
     <script type="text/javascript" async="" src="js/siteanalyze_2884.js"></script>
     <script async="" src="js/gtm.js"></script>
     <script type="text/javascript" src="js/common.js"></script>
 
+    <iframe src="javascript:void(0)" title="" role="presentation"
+        style="width: 0px; height: 0px; border: 0px; display: none;"></iframe>
+    <script type="text/javascript" async="" src="{% static 'js/siteanalyze_2884.js' %}"></script>
+    <script async="" src="{% static 'js/gtm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
 
+
+    <script src="{% static 'js/otSDKStub.js' %}" type="text/javascript" charset="UTF-8"
+        data-domain-script="73b90cc8-385b-4f54-8f21-461a790b4365">
+        </script>
+    <script type="text/javascript">function OptanonWrapper() { }</script>
     <script src="js/otSDKStub.js" type="text/javascript" charset="UTF-8"
         data-domain-script="73b90cc8-385b-4f54-8f21-461a790b4365">
         </script>
@@ -171,6 +183,10 @@
         content="/etc.clientlibs/firstcitizens/clientlibs/clientlib-aem/resources/favicon/browserconfig.xml?v=2">
     <meta name="theme-color" content="#ffffff">
 
+    <link rel="stylesheet" href="{% static 'css/clientlib-aem.557571bcad08753fd5efe8c2b70c69e1.css' %}" type="text/css">
+
+
+
 
     <link rel="stylesheet" href="{% static 'css/clientlib-aem.557571bcad08753fd5efe8c2b70c69e1.css' %}" type="text/css">
 
@@ -178,8 +194,6 @@
     </script>
 
 
-    <script src="{% static 'js/launch-3e552d60a76d.min.js' %}" async="">
-    </script>
 
 
 
@@ -198,7 +212,9 @@
     </script>
 
 
-    <script src="js/launch-3e552d60a76d.min.js" async="">
+
+
+    <script src="{% static 'js/launch-3e552d60a76d.min.js' %}" async="">
     </script>
 
 
@@ -1411,8 +1427,7 @@
 
 
 
-    <script src="js/clientlib-aem.3a5c42e76921001a501a05633a8434e2.js"></script>
-    <script src="js/clientlib-dependencies.a9dcac4698709ca8e1cbc88363cf0793.js"></script>
+    
 
 
 
@@ -1474,33 +1489,9 @@
                                     data-prompt-header="Some suggested searches:">
                                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
                             </article>
 
                         </section>
-
-
-
-
-
-
-
-
-
-
-
 
                     </article>
 
@@ -1540,8 +1531,7 @@
 
 
                                     <div class="fcb-image__table-element">
-                                        <img class="fcb-image__image" src="images/image.20240613.png"
-                                            srcset="images/image.20240613_1.png 2x, images/image.20240613.png 1x"
+                                        <img class="fcb-image__image" src="{% static 'images/image.20240613.png' %}"
                                             alt="First Citizens Bank Logo" data-trackable="true"
                                             data-asset-id="dc55e3cd-91af-480a-b6da-ccc2cb83406d" loading="lazy"
                                             tabindex="0">
@@ -1558,111 +1548,7 @@
                                     <!-- Login Form here -->
                                     {% include 'main/_components/loginform.html' %}
 
-                                    <div class="fcb-login__other" id="login-other-services">
-                                        <div class="fcb-login__eyebrow fcb-eyebrow">
-                                            Log In
-                                        </div>
-                                        <div class="fcb-login__title" role="heading" aria-level="2">
-
-                                            Other Services
-                                        </div>
-                                        <button class="fcb-login__other-back" id="login-other-return">
-                                            <svg class="fcb-icon fcb-icon--sm fcb-icon--sys-chevron-thick"
-                                                aria-hidden="true" focusable="false" data-trackable="true"
-                                                data-asset-id="sys-chevron-thick">
-                                                <use xlink:href="images/icons.svg#sys-chevron-thick"></use>
-                                            </svg>
-                                            Back<span class="sr-only"> to login</span>
-                                        </button>
-                                        <div class="fcb-login__link-lists">
-                                            <div class="fcb-login__link-lists-column fcb-link-list__content fcb-rte">
-                                                <p><a href="https://www.firstcitizensrewards.com/pages/main/default.aspx"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">First Citizens Rewards®</a></p>
-                                                <p><a href="https://firstcitizens.netxinvestor.com/nxi/login"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Online Brokerage</a></p>
-                                                <p><a class="rte-link--is-list-link"
-                                                        href="https://login.firstcitizens.com/home/idx-fcb_portfolioonlinetrustdeskrdms_1/0oaaj5zkwoF9rynJB357/alnaj65kbpplezvKH357"
-                                                        target="_blank" rel="nofollow">Portfolio Online</a></p>
-                                                <p><a href="https://secure.newportgroup.com/login/fcb/participant"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Retirement Plan Access</a></p>
-                                                <p><a href="https://www.moneyguidepro.com/fcbwealthplanning/Guests.aspx"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Financial Planning Tool</a></p>
-                                                <p><a href="https://fcb.iphiview.com/fcb/" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">Stellar Technology
-                                                        - Fund</a></p>
-                                                <p><a href="https://payments.deluxe.com/receivables?brandingID=FCB"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">First Citizens Receivables</a></p>
-                                                <p><span style="white-space: nowrap;"><a
-                                                            href="https://www.onlinetreasurysolutions.com/portal/esec/login.ht"
-                                                            target="_blank" class="rte-link--is-list-link"
-                                                            rel="nofollow">Lockbox - Online Treasury
-                                                            Solutions</a></span></p>
-                                                <p><a href="https://propertypay.firstcitizens.com" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">Pay
-                                                        <abbr>HOA</abbr> Fees</a></p>
-                                                <p><a href="https://secure.firstcitizens.com/firstcitizensonline/uux.aspx#/login"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Commercial Online Banking</a></p>
-
-                                            </div>
-
-                                            <div class="fcb-login__link-lists-column fcb-link-list__content fcb-rte">
-                                                <p><a href="https://www.remoteimagedeposit.com/FCBNC/Login.faces?DOMAIN=customerDomain&amp;LOCALE=en_US&amp;SHOWTIPS=true"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Remote Deposit Capture</a></p>
-                                                <p><a href="https://login.firstcitizens.com/home/idx-fcb_commercialadvantageintegratedpayments_1/0oafd44fclJxgDsNd357/alnfd4b0lpeInH6xi357"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Integrated Payables</a></p>
-                                                <p><a href="https://pmx.vancopayments.com/#/firstcitizens/signin"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">eReceivables Payment</a></p>
-                                                <p><a href="https://receivables.regulusgroup.com/lockbox/Authentication/PSGLogin.aspx?undefined&amp;screenWidth=1366"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">Lockbox Portal</a></p>
-                                                <p><a href="https://portal.checxchange.com/login/fcb" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">ChecXchange</a>
-                                                </p>
-                                                <p><a href="https://fxboss.firstcitizens.com/cas/login?service=https%3A%2F%2Ffxboss.firstcitizens.com%2F%2Fj_spring_cas_security_check"
-                                                        target="_blank" class="rte-link--is-list-link"
-                                                        rel="nofollow">FXEnvoy</a></p>
-                                                <p><a href="/hosted/equipment-finance-customer-portal" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">Equipment
-                                                        Finance</a></p>
-
-                                            </div>
-
-                                            <div class="fcb-login__link-lists-column fcb-link-list__content fcb-rte">
-                                                <p><a href="https://portal.csr24.com/mvc/8339761" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">My Insurance
-                                                        Center</a></p>
-                                                <p><a href="https://www.accessmyiq.com/" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">Worldpay
-                                                        <abbr>IQ</abbr></a></p>
-                                                <p><a class="rte-link--is-list-link"
-                                                        href="https://www.americanexpress.com/en-us/business/merchant/supplies/?"
-                                                        target="_blank" rel="nofollow">American Express Supplies</a></p>
-                                                <p><a href="https://360control.firstdata.com/UI/login/views/login.html#/Login/246883/840/fir0000034/0/"
-                                                        target="_blank" class="rte-link--is-list-link">Purchasing
-                                                        Card</a></p>
-                                                <p><a class="rte-link--is-list-link"
-                                                        href="https://login.firstcitizens.com/home/idx-fcb_electronicbillpresentmentandpaymentebpp_1/0oaaj5yattL4cd8MD357/alnaj62h75xFvYj6x357"
-                                                        target="_blank" rel="nofollow">Electronic Bill Presentment &amp;
-                                                        Payment</a></p>
-                                                <p><a href="https://profile.firstcitizens.com/" target="_blank"
-                                                        class="rte-link--is-list-link" rel="nofollow">Profile
-                                                        Manager</a></p>
-                                                <p><a class="rte-link--is-list-link"
-                                                        href="https://treasuryapps.firstcitizens.com/app/tp/ui"
-                                                        target="_blank" rel="nofollow">Commercial Image Archive</a></p>
-
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
 
 
@@ -1741,9 +1627,7 @@
 
 
                                     <div class="fcb-tg__tile-wrapper  ">
-                                        <a class="fcb-tile"
-                                            href="https://digitalbanking.firstcitizens.com/FCBTCOnline/uux.aspx#/messages"
-                                            target="_blank">
+                                        <a class="fcb-tile" href="{% url 'call_us' %}" target="_blank">
 
 
 
@@ -1769,7 +1653,7 @@
 
                                         </a>
 
-                                        <a class="fcb-tile" href="/support/contact/other-questions" target="_self">
+                                        <a class="fcb-tile" href="{% url 'call_us' %}" target="_self">
 
 
 
@@ -1850,9 +1734,8 @@
 
 
 
-
-
-
+    <script src="{% static 'js/clientlib-aem.443a4367e6a31d7075db5a31dc162954.js' %}"></script>
+    <script src="{% static 'js/clientlib-dependencies.a9dcac4698709ca8e1cbc88363cf0793.js' %}"></script>
 
 
 

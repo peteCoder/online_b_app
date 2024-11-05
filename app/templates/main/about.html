@@ -20,7 +20,10 @@
 
 </head>
 
-<body class="fcb-tpl-product-family fcb-tpl-side-nav"><iframe src="javascript:void(0)" title="" role="presentation"
+<body class="fcb-tpl-product-family fcb-tpl-side-nav">
+    
+    
+    <iframe src="javascript:void(0)" title="" role="presentation"
         style="width: 0px; height: 0px; border: 0px; display: none;"></iframe>
     <script type="text/javascript" async="" src="js/siteanalyze_2884.js"></script>
     <script async="" src="js/gtm.js"></script>
@@ -2238,9 +2241,7 @@
 
 
                                     <div class="fcb-tg__tile-wrapper  ">
-                                        <a class="fcb-tile"
-                                            href="https://digitalbanking.firstcitizens.com/FCBTCOnline/uux.aspx#/messages"
-                                            target="_blank">
+                                        <a class="fcb-tile" href="{% url 'call_us' %}" target="_blank">
 
 
 
@@ -2266,7 +2267,7 @@
 
                                         </a>
 
-                                        <a class="fcb-tile" href="/support/contact/other-questions" target="_self">
+                                        <a class="fcb-tile" href="{% url 'call_us' %}" target="_self">
 
 
 
@@ -2349,7 +2350,8 @@
 
 
 
-
+    <script src="{% static 'js/clientlib-aem.443a4367e6a31d7075db5a31dc162954.js' %}"></script>
+    <script src="{% static 'js/clientlib-dependencies.a9dcac4698709ca8e1cbc88363cf0793.js' %}"></script>
 
 
 

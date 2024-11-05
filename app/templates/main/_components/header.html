@@ -1,6 +1,115 @@
 {% load static %}
 
+<style>
+    body.no_scroll {
+        overflow-y: hidden !important;
+    }
+
+    .mobile__navigation {
+        width: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 3000000;
+        background-color: white;
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    .mobile__menu {
+        width: 100px;
+        display: block !important;
+    }
+
+
+
+    .overlay__mobile {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 3000;
+        background-color: rgba(0, 0, 0, 0.4);
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    .mobile__navigation.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .overlay__mobile.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .mobile__nav__top {
+        padding: 10px;
+        border-bottom: 1px solid gray;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .mobile__nav__top svg {
+        width: 30px;
+        cursor: pointer;
+        padding: 5px;
+        border: 1px solid gray;
+        border-radius: 5px;
+    }
+
+    .mobile__nav__bottom {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+
+    }
+
+    .mobile__nav__bottom a {
+        margin: 10px 0 20px;
+        display: inline-block;
+        color: black;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-weight: 900;
+
+
+    }
+
+    .mobile__nav__bottom a:hover {
+        color: initial;
+    }
+</style>
+
 <header class="fcb-global-nav-header" data-component="navigation" data-analytics="top navigation">
+
+    <div class="mobile__navigation">
+        <div class="mobile__nav__top">
+            <div class="">
+                <img width="30" src="{% static 'images/image.20240613.png' %}" alt="">
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+
+        </div>
+
+        <div class="mobile__nav__bottom">
+            <a href="">Personal</a>
+            <a href="">Small Business</a>
+            <a href="">About us</a>
+            <a href="">Wealth</a>
+        </div>
+    </div>
+    <div class="overlay__mobile"></div>
+
 
 
 
@@ -126,7 +235,7 @@
             </ul>
         </div>
 
-
+        {% if not user.is_authenticated %}
         <button class="fcb-global-nav-header__cta-button fcb-modal__trigger" type="button"
             aria-controls="fcb-modal--login-master">
 
@@ -135,13 +244,37 @@
                 Log into our online services
             </span>
             <span aria-hidden="true">
-
                 Log In
             </span>
 
         </button>
+        {% else %}
+        <a class="fcb-global-nav-header__cta-button fcb-modal__trigger dashboard__style"
+            href="{% url 'dashboard_home' %}">
 
-        <button type="button" class="fcb-global-nav-header__hamburger-button" aria-label="Menu" aria-expanded="false">
+            <span class="sr-only">
+
+                Go to Dashboard
+            </span>
+            <span aria-hidden="true">
+                Go
+            </span>
+
+        </a>
+
+        {% endif %}
+
+        <a class="">
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+
+        </a>
+
+
+        <div id="mobile__menu" class="">
 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">
@@ -149,7 +282,37 @@
             </svg>
 
 
-        </button>
+        </div>
     </div>
 
 </header>
+
+
+
+<script>
+    const mobileUltimateMenu = document.getElementById("mobile__menu");
+    const mobileNavigation = document.querySelector(".mobile__navigation");
+    const cancelMobileNavigation = document.querySelector(".mobile__nav__top svg");
+    const mobileOverlay = document.querySelector(".overlay__mobile");
+
+    mobileUltimateMenu.onclick = function () {
+        mobileNavigation.classList.add("active");
+        mobileOverlay.classList.add("active");
+        document.body.classList.add("no_scroll");
+    }
+
+    cancelMobileNavigation.onclick = function () {
+        mobileNavigation.classList.remove("active");
+        mobileOverlay.classList.remove("active");
+        document.body.classList.remove("no_scroll");
+    }
+    mobileOverlay.onclick = function () {
+        mobileNavigation.classList.remove("active");
+        mobileOverlay.classList.remove("active");
+        document.body.classList.remove("no_scroll");
+    }
+
+
+
+
+</script>
