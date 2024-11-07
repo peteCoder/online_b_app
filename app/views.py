@@ -3,7 +3,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from .models import Account, Transaction, Loan, Card, Transfer, Notification, Support
-
+from api.email import send_beautiful_html_email_create_user, send_beautiful_html_email_create_account
 from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
@@ -172,27 +172,23 @@ def register(request):
     if request.user.is_authenticated:
         return redirect("dashboard_home")
     
-    # if request.method == 'POST':
-    #     print(request.POST)  # Print the POST data to confirm what's being submitted
-    #     print(request.FILES)
-    #     form = SignupForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         form.save()
-    #         messages.success(request, 'Account created successfully! Please log in.')
-    #         return redirect('login')
-    #     else:
-    #         # This will print the actual form validation errors to the terminal
+    EMPLOYMENT_STATUS = [
+        "employed",
+        "self-employed",
+        "unemployed"
+    ]
 
-    #         for field in form:
-    #             print(f"{field.name}: {field.errors}")  # Print specific field errors
-    #         print("Form is not valid")
-    #         print(form.errors)  # Prints field-specific errors
-    #         print(form.non_field_errors())  # Prints non-field errors if any
-    #         messages.error(request, 'Please correct the error(s) below.')
-    # else:
-    #     form = SignupForm()
+    ACCOUNT_TYPES = (
+        'CHECKING',
+        'SAVINGS',
+        'MONEY MARKET',
+        'CD', 
+    )
 
-    return render(request, "main/pages-sign-up.html", {})
+    return render(request, "main/pages-sign-up.html", {
+        "employment_statuses": EMPLOYMENT_STATUS,
+        "account_types": ACCOUNT_TYPES
+    })
 
 
 
@@ -567,6 +563,21 @@ def create_bank_account(request):
 
         account.save()
 
+        send_beautiful_html_email_create_account(
+            account_name=request.user.first_name + " " + request.user.last_name, 
+            initial_deposit=account.initial_deposit,
+            info_details= "To activate your account, please log in to your dashboard and make an initial deposit using the provided account details.",
+            account_details={
+                "Account Number": account.account_number,
+                "Account Type": selected_account_type.capitalize(),
+                "Branch": account.location,
+                "Balance": f"${account.balance}",
+                "ACH Routing": account.ach_routing,
+                "Activation": "Pending",
+            },  
+            to_email=request.user.email
+        )
+
         messages.success(request, f"{account.get_account_type_display()} account created successfully.")
         return redirect('accounts')
 
@@ -593,8 +604,10 @@ def confirm_account_activation_payment(request, pk):
             account.activation_receipt = receipt
             account.applied_for_activation = True
             account.save()
+
             
-            messages.success(request, 'Payment confirmed! Your account will be activated soon.')
+            
+            messages.success(request, 'Your account will be activated soon.')
         else:
             messages.error(request, 'Please upload a valid receipt.')
         

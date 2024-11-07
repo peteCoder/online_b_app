@@ -9,7 +9,6 @@
         <!-- Account Information Card -->
         <div class="row">
             <div class="col-12 col-md-6">
-
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Account Information</h5>
@@ -17,39 +16,27 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Account Number:</strong></p>
-                                <p class="text-muted">{{ account.account_number }}</p>
+                                <p><strong>Account Number:</strong> {{ account.account_number }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Account Type:</strong></p>
-                                <p class="text-muted">{{ account.account_type }} Account</p>
+                                <p><strong>Account Type:</strong> {{ account.account_type }} Account</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Total Balance:</strong></p>
-                                <p class="text-muted">${{ account.balance }}</p>
+                                <p><strong>Total Balance:</strong> ${{ account.balance }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Currency:</strong></p>
-                                <p class="text-muted">USD</p>
+                                <p><strong>Currency:</strong> USD</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Bank Name:</strong></p>
-                                <p class="text-muted">{{ account.bank_name }}</p>
+                                <p><strong>Bank Name:</strong> {{ account.bank_name }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>ACH Routing:</strong></p>
-                                <p class="text-muted">{{ account.ach_routing }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>Location:</strong></p>
-                                <p class="text-muted">{{ account.location }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>Status:</strong></p>
-                                <span
-                                    class="badge {% if account.activated %} bg-success {% else %} bg-warning {% endif %}">
-                                    {% if account.activated %} Active {% else %} Pending Activation {% endif %}
-                                </span>
+                                <p><strong>Status:</strong>
+                                    <span
+                                        class="badge {% if account.activated %} bg-success {% else %} bg-warning {% endif %}">
+                                        {% if account.activated %} Active {% else %} Pending Activation {% endif %}
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -64,24 +51,52 @@
                     </div>
                     <div class="card-body">
                         {% if not account.activated %}
-                        <p>To activate your account, the required deposit is ${{ account.confirmation_payment_amount }}
-                        </p>
+                        <p>To activate your account, please make a deposit of ${{ account.confirmation_payment_amount }}
+                            via one of the available payment methods below and upload your payment confirmation.</p>
 
-                        <div class="">
-                            <!-- Here are the bank Details -->
-                            {% include 'dashboard/_components/_bank_info.html' %}
+                        <h6>Payment Options</h6>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Choose Payment Method:</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="" selected>Select Payment Method</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="crypto">Cryptocurrency</option>
+                                <option value="cashapp">CashApp</option>
+                            </select>
                         </div>
-
+                        
+                        <!-- PayPal Details -->
+                        <div id="paypalDetails" class="payment-details d-none">
+                            <p>PayPal Address: <strong>paypal@example.com</strong></p>
+                        </div>
+                        
+                        <!-- Crypto Details -->
+                        <div id="cryptoDetails" class="payment-details d-none">
+                            <p>Crypto Wallet Address: <strong>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</strong></p>
+                            <p>Note: Only send the exact amount in Bitcoin.</p>
+                        </div>
+                        
+                        <!-- CashApp Details -->
+                        <div id="cashappDetails" class="payment-details d-none">
+                            <p>CashApp Username: <strong>$CashAppUser</strong></p>
+                        </div>
+                        <p>After completing your transaction, please upload a screenshot of your receipt for
+                            verification.</p>
 
                         {% if not account.applied_for_activation %}
                         <form id="activation-form" enctype="multipart/form-data">
                             {% csrf_token %}
+                            
                             <div class="mb-3">
                                 <label for="receipt" class="form-label">Upload Payment Receipt:</label>
                                 <input type="file" class="form-control" id="receipt" name="receipt" required>
                             </div>
                             <button type="button" id="submitReceiptButton" class="btn btn-primary"
-                                onclick="submitActivation()">Submit Payment Confirmation</button>
+                                onclick="submitActivation()">
+                                <span id="loading-spinner" class="spinner-border spinner-border-sm d-none" role="status"
+                                    aria-hidden="true"></span>
+                                Submit Payment Confirmation
+                            </button>
                         </form>
                         {% else %}
                         <p>Your activation request is being processed. Please await further instructions.</p>
@@ -119,16 +134,37 @@
 
 {% block script %}
 <script>
-    // JavaScript for handling activation submission and modal display
 
-    document.getElementById("submitReceiptButton").onclick = function () {
+document.getElementById("paymentMethod").addEventListener("change", function() {
+        const selectedMethod = this.value;
+
+        // Hide all payment details initially
+        document.getElementById("paypalDetails").classList.add("d-none");
+        document.getElementById("cryptoDetails").classList.add("d-none");
+        document.getElementById("cashappDetails").classList.add("d-none");
+
+        // Show selected payment details
+        if (selectedMethod) {
+            document.getElementById(`${selectedMethod}Details`).classList.remove("d-none");
+        }
+    });
+
+    // Function for handling activation submission and modal display with loading spinner
+
+    function submitActivation() {
         const formData = new FormData();
         const receipt = document.getElementById('receipt').files[0];
+        const paymentMethod = document.getElementById('paymentMethod').value;
         if (!receipt) {
             alert('Please upload a valid receipt.');
             return;
         }
+
         formData.append('receipt', receipt);
+        formData.append('paymentMethod', paymentMethod);
+
+        // Show loading spinner
+        document.getElementById("loading-spinner").classList.remove("d-none");
 
         fetch(`/api/confirm-account-activation/{{ account.id }}/`, {
             method: 'POST',
@@ -151,19 +187,14 @@
                     alert('Error: ' + data.message);
                 }
             })
+            .finally(() => {
+                document.getElementById("loading-spinner").classList.add("d-none");
+                setTimeout(() => window.location.reload(), 3000);
+            })
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred. Please try again later.');
             });
     }
-
-    document.getElementById('copy-btn').addEventListener('click', function () {
-        const accountNumber = document.getElementById('account-number').textContent;
-        navigator.clipboard.writeText(accountNumber).then(() => {
-            alert('Account number copied to clipboard!');
-        }).catch(err => {
-            console.error('Could not copy text: ', err);
-        });
-    });
 </script>
 {% endblock %}

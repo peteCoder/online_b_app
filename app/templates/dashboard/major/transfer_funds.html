@@ -209,7 +209,7 @@
                     document.getElementById('errorMessage').style.display = 'none';
                     document.getElementById('successMessage').style.display = 'block';
                     document.getElementById('successMessage').textContent = data.message;
-                    window.location.href = "/transactions"; // Optionally reload the page to reflect changes
+                    window.location.href = "{% url 'transactions' %}"; // Optionally reload the page to reflect changes
                 } else {
                     // Show error message
                     document.getElementById('successMessage').style.display = 'none';

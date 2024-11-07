@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
+from .email import send_beautiful_html_email_create_account
+
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 
@@ -35,6 +37,8 @@ from django.contrib import messages
 from django.conf import settings
 
 
+from .email import send_beautiful_html_email_create_user
+
 
 User = get_user_model()
 
@@ -46,6 +50,11 @@ class RegisterAPIView(APIView):
             'profile_image', 'front_id_image', 'back_id_image',
             'password', 'password_confirmation'
         ]
+
+        employment_status = request.data.get("employment_status")
+        preferred_account_type = request.data.get("preferred_account_type")
+
+        print(employment_status, preferred_account_type)
 
         email = request.data.get("email")
 
@@ -82,6 +91,18 @@ class RegisterAPIView(APIView):
                 back_id_image=request.FILES.get('back_id_image'),
                 password=request.data['password']
             )
+
+            # account = Account(
+            #     customer=request.user,
+            #     account_type=user.preferred_account_type,
+            # )
+            # account.save()
+
+            send_beautiful_html_email_create_user(
+                bank_id=user.bank_id,
+                account_details=f"Account Type: {user.preferred_account_type}, Balance: $0",
+                to_email=user.email,
+            )
             # self.send_registration_email(user)
             return Response({"message": "User registered successfully. Check your email for details."}, status=status.HTTP_201_CREATED)
 
@@ -106,7 +127,7 @@ def login_with_bank_id_api(request):
     bank_id = request.data.get('bank_id')
     password = request.data.get('password')
 
-    # 0656312726
+    
 
     print(f"Details {bank_id} {password}")
 
@@ -117,7 +138,7 @@ def login_with_bank_id_api(request):
             login(request, user)
             messages.success(request, "Login successful!")
             # Change the redirect url here if you change the dashboard
-            return Response({'message': 'Login successful', 'redirect_url': '/'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Login successful', 'redirect_url': '/dashboard'}, status=status.HTTP_200_OK)
         else:
             messages.success(request, "Invalid credentials")
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -232,6 +253,23 @@ def ConfirmAccountActivationAPIView(request, pk):
     
     account.receipt = receipt
     account.applied_for_activation = True
+    send_beautiful_html_email_create_account(
+        account_name=request.user.first_name + " " + request.user.last_name, 
+        initial_deposit=account.initial_deposit,
+        info_details= "Your Activation Request for your account was sent successfully!",
+        account_details={
+            "Account Number": account.account_number,
+            "Account Type": account.account_type.capitalize(),
+            "Branch": account.location,
+            "Balance": f"${account.balance}",
+            "ACH Routing": account.ach_routing,
+            "Activation": "Pending",
+        },  
+        to_email=request.user.email
+    )
+
+    print("Email will be sent")
+
     account.save()
     return Response({'success': 'Payment confirmed! Your account will be activated soon.'}, status=status.HTTP_200_OK)
 
