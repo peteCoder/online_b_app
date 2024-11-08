@@ -35,7 +35,7 @@
 </head>
 
 <body class="py-5"
-	style="background-image: url('{% static 'images/firstcitizenbg-background.jpg' %}'); background-size: cover;">
+	style="background-image: url('{% static 'images/firstcitizenbg-background.jpg' %}'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
 	<main class="d-flex w-100">
 		<div class="container d-flex flex-column">
 			<div class="row vh-100">
@@ -101,7 +101,8 @@
 									<div class="mb-3">
 										<label for="employment_status" class="form-label">Employment Status <span
 												class="asterisks">*</span></label>
-										<select id="employment_status" name="employment_status" class="form-select" required aria-label="Default select example">
+										<select id="employment_status" name="employment_status" class="form-select"
+											required aria-label="Default select example">
 											{% for employment_status in employment_statuses %}
 											<option value="{{employment_status}}">{{employment_status}}</option>
 											{% endfor %}
@@ -112,7 +113,8 @@
 									<div class="mb-3">
 										<label for="preferred_account_type" class="form-label">Preferred Account Type
 											<span class="asterisks">*</span></label>
-										<select style="text-transform: uppercase;" class="form-select" id="preferred_account_type" name="preferred_account_type" required
+										<select style="text-transform: uppercase;" class="form-select"
+											id="preferred_account_type" name="preferred_account_type" required
 											aria-label="Default select example">
 											{% for account_type in account_types %}
 											<option value="{{ account_type }}" style="text-transform: uppercase;">

@@ -33,7 +33,7 @@
         display: none !important;
         width: 100px;
     }
-    
+
     .overlay__mobile {
         width: 100%;
         position: fixed;
@@ -151,16 +151,13 @@
         </div>
 
         <div class="mobile__nav__bottom">
-            <a href="">Personal</a>
-            <a href="">Small Business</a>
-            <a href="">About us</a>
-            <a href="">Wealth</a>
+            <a href="{% url 'personal_page' %}">Personal</a>
+            <a href="{% url 'business' %}">Small Business</a>
+            <a href="{% url 'about_page' %}">About us</a>
+            <a href="{% url 'wealth' %}">Wealth</a>
         </div>
     </div>
     <div class="overlay__mobile"></div>
-
-
-
 
     <div class="fcb-global-nav-header__container">
         <a href="/">

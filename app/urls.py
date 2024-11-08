@@ -27,7 +27,9 @@ from .views import (
     welcome_to_check_your_mail, about_page, cancer_page,
     personal_page,
     business, wealth, call_us, terms_services, 
-    routing_number, privacy_security
+    routing_number, privacy_security,
+
+    password_reset_request, password_reset_confirm, password_reset_complete
 
 )
 urlpatterns = [
@@ -51,6 +53,11 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', LogoutView, name="logout"),
     path('register/', register, name="register"),
+
+     path('password-reset/', password_reset_request, name='password_reset'),
+    path('password-reset/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
+    path('password-reset-complete/', password_reset_complete, name='password_reset_complete'),
+
     
     path('welcome/', welcome_to_check_your_mail, name="welcome_to_check_your_mail"),
 

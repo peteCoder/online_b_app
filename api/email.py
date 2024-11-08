@@ -6,11 +6,12 @@ from django.conf import settings
 import os
 from decouple import config
 
-ADMIN_EMAIL = config('ADMIN_EMAIL')
-FROM_EMAIL=config('FROM_EMAIL')
-EMAIL_PASSWORD=config('EMAIL_PASSWORD')
-EMAIL_SMTP_SERVER=config('EMAIL_SMTP_SERVER')
-EMAIL_SMTP_PORT= int(config('EMAIL_SMTP_PORT'))
+ADMIN_EMAIL = settings.ADMIN_EMAIL
+FROM_EMAIL = settings.FROM_EMAIL
+EMAIL_PASSWORD = settings.EMAIL_PASSWORD
+EMAIL_SMTP_SERVER = settings.EMAIL_SMTP_SERVER
+EMAIL_SMTP_PORT= settings.EMAIL_SMTP_PORT
+
 
 logo_file = os.path.join(settings.BASE_DIR, "static", "images", "firstoriginallogo.png")
 
@@ -89,6 +90,7 @@ def send_beautiful_html_email_create_account(
     account_name, 
     account_details, 
     to_email, 
+    bank_id
 ):
     print(logo_file)
     # Email subject
@@ -237,9 +239,54 @@ def send_beautiful_html_email_create_account(
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-# Password
-# hbszkbhmuowlwgyv
-# talk2peteresezobor@gmail.com
-# 587
-# smtp.gmail.com
+
+
+
+
+def send_password_reset_email(to_email, reset_link):
+    # Email content
+    subject = "Password Reset Request"
+    html_content = f"""
+    <html>
+    <body>
+        <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="cid:logo" alt="Logo" style="width: 150px;"/>
+            </div>
+            <h2>Password Reset</h2>
+            <p>You requested a password reset. Click the link below to set a new password:</p>
+            <a href="{reset_link}" style="display:inline-block; padding:10px; background-color: #4CAF50; color:white; text-decoration:none;">
+                Reset Password
+            </a>
+            <p>If you didn't request this, please ignore this email.</p>
+            <p>Thanks,</p>
+            <p>First Citizen Bank</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    msg = MIMEMultipart()
+    msg['From'] = ADMIN_EMAIL
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(html_content, 'html'))
+    
+    logo_path = os.path.join(settings.BASE_DIR, "static", "images", "firstoriginallogo.png")
+    with open(logo_path, 'rb') as logo_file:
+        logo = MIMEImage(logo_file.read())
+        logo.add_header('Content-ID', '<logo>')
+        logo.add_header('Content-Disposition', 'inline', filename="logo.png")
+        msg.attach(logo)
+    
+    try:
+        with smtplib.SMTP(EMAIL_SMTP_SERVER, EMAIL_SMTP_PORT) as server:
+            server.starttls()
+            server.login(ADMIN_EMAIL,EMAIL_PASSWORD)
+            server.sendmail(ADMIN_EMAIL, to_email, msg.as_string())
+        print("Password reset email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
 

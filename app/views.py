@@ -3,7 +3,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from .models import Account, Transaction, Loan, Card, Transfer, Notification, Support
-from api.email import send_beautiful_html_email_create_user, send_beautiful_html_email_create_account
+from api.email import send_beautiful_html_email_create_user, send_beautiful_html_email_create_account, send_password_reset_email
 from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
@@ -27,6 +27,13 @@ from django.contrib import messages
 
 from .forms import SignupForm
 from functools import reduce
+
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 
 
 
@@ -789,3 +796,50 @@ def privacy_security(request):
 
 
 
+# View to handle password reset request
+def password_reset_request(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        reset_email_url = request.POST.get('password_url')
+        user = User.objects.filter(email=email).first()
+        if user:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            reset_url = request.build_absolute_uri(f'/password-reset/{uid}/{token}/')
+            print("Reset Email link: ", reset_email_url, "  -  ", reset_url)
+            
+            send_password_reset_email(to_email=user.email, reset_link=reset_url)
+            return JsonResponse({'success': 'Password reset email sent'})
+        else:
+            return JsonResponse({'error': 'Email address not found'}, status=404)
+    return render(request, 'dashboard/major/password_reset_form.html')
+
+# View to handle password reset form submission
+def password_reset_confirm(request, uidb64, token):
+    if request.method == 'POST':
+        new_password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if new_password == confirm_password:
+            try:
+                uid = force_str(urlsafe_base64_decode(uidb64))
+                user = User.objects.get(pk=uid)
+                if default_token_generator.check_token(user, token):
+                    user.set_password(new_password)
+                    user.save()
+                    return JsonResponse({'success': 'Password reset successfully'})
+                else:
+                    return JsonResponse({'error': 'Invalid token'}, status=400)
+            except Exception as e:
+                return JsonResponse({'error': 'Invalid request'}, status=400)
+        else:
+            return JsonResponse({'error': 'Passwords do not match'}, status=400)
+
+    return render(request, 'dashboard/major/password_reset_confirm.html')
+
+
+
+
+
+def password_reset_complete(request):
+    return render(request, 'dashboard/major/password_reset_complete.html')

@@ -164,6 +164,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ADMIN_EMAIL = config('ADMIN_EMAIL')
+FROM_EMAIL=config('FROM_EMAIL')
+EMAIL_PASSWORD=config('EMAIL_PASSWORD')
+EMAIL_SMTP_SERVER=config('EMAIL_SMTP_SERVER')
+EMAIL_SMTP_PORT= int(config('EMAIL_SMTP_PORT'))
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
