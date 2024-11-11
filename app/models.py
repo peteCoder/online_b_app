@@ -32,6 +32,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('CD', 'Certificate of Deposit (CD)'),
     ]
 
+    otp_code =  models.CharField(max_length=100, blank=True, null=True)
 
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(max_length=50, blank=False)  # Required

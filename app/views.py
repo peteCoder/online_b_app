@@ -3,7 +3,13 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from .models import Account, Transaction, Loan, Card, Transfer, Notification, Support
-from api.email import send_beautiful_html_email_create_user, send_beautiful_html_email_create_account, send_password_reset_email
+from api.email import (
+    send_beautiful_html_email_create_user, 
+    send_beautiful_html_email_create_account, 
+    send_password_reset_email,
+    send_otp_code_verification,
+
+)
 from django.http import JsonResponse
 
 from django.contrib.auth.decorators import login_required
@@ -34,7 +40,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-
+from .constants import generate_4_digit_code
 
 
 
@@ -224,12 +230,27 @@ def transfer_funds(request):
     return render(request, "dashboard/major/transfer_funds.html", {"notification_count": notifications.count(), 'accounts': accounts, "notifications": notifications})
 
 
+
+
 @csrf_exempt
 def validate_transfer(request):
     if request.method == 'POST':
         from_account_id = request.POST.get('from_account')
         amount = request.POST.get('amount')
         to_account = request.POST.get('to_account')
+
+        otp_code = generate_4_digit_code()
+
+        print(not request.user.otp_code)
+        # Send OTP To mail
+        if not request.user.otp_code:
+            request.user.otp_code = otp_code
+            request.user.save()
+            send_otp_code_verification(
+                to_email=request.user.email, 
+                otp_code=otp_code, 
+                transaction_type="transfer"
+            )
 
         # Get the account and validate the balance
         try:
@@ -242,9 +263,31 @@ def validate_transfer(request):
         # Validate other details (like the existence of the to_account)
         # This is just an example, you'd implement your own logic for validating the recipient's account
 
+        # Send OTP To mail
+
         return JsonResponse({"success": True, "message": "Enter your Password"})
     return JsonResponse({"success": False, "message": "Invalid request."})
 
+
+@csrf_exempt
+def resend_otp_code(request):
+    
+    try:
+        transaction_type = json.loads(request.body)['transaction_type']
+        print("Transaction Type: ", transaction_type)
+
+        otp_code = generate_4_digit_code()
+        request.user.otp_code = otp_code
+        request.user.save()
+        send_otp_code_verification(
+            to_email=request.user.email, 
+            otp_code=otp_code, 
+            transaction_type=transaction_type
+        )
+        return JsonResponse({"success": True, "message": "OTP was resent successfully."})
+    except Exception as e:
+         print(e)
+         return JsonResponse({"success": False, "message": "Problem encountered resending OTP code."})
 
 @csrf_exempt
 def confirm_transfer(request):
@@ -258,45 +301,50 @@ def confirm_transfer(request):
 
         # Validate password
         password = data.get('password')
-        if not authenticate(username=user.email, password=password):
-            return JsonResponse({"success": False, "message": "Invalid password."})
+        print(password)
+        user = request.user
+        if not user.otp_code == password:
+            return JsonResponse({"success": False, "message": "Invalid OTP."})
+        
+        return JsonResponse({"success": True, "message": "Successful."})
+
 
         # Process the transfer
-        from_account = Account.objects.get(id=data.get('from_account'))
-        amount = int(data.get('amount'))
+        # from_account = Account.objects.get(id=data.get('from_account'))
+        # amount = int(data.get('amount'))
 
-        if from_account.balance < amount:
-            return JsonResponse({"success": False, "message": "Insufficient funds."})
+        # if from_account.balance < amount:
+        #     return JsonResponse({"success": False, "message": "Insufficient funds."})
 
         # Deduct the amount from the sender's account
-        from_account.balance -= amount
-        from_account.save()
+        # from_account.balance -= amount
+        # from_account.save()
 
         # You'd also want to add code to credit the recipient's account
 
         # Log the transfer
-        Transfer.objects.create(
-            user=user,
-            from_account=from_account,
-            account_holder_name=data.get('beneficiary_name'),
-            account_number=data.get('to_account'),
-            ach_routing=data.get('ach_routing'),
-            account_type=from_account.account_type,
-            bank_name=data.get('bank_name'),
-            amount=amount,
-            address=data.get('address')
-        )
+        # Transfer.objects.create(
+        #     user=user,
+        #     from_account=from_account,
+        #     account_holder_name=data.get('beneficiary_name'),
+        #     account_number=data.get('to_account'),
+        #     ach_routing=data.get('ach_routing'),
+        #     account_type=from_account.account_type,
+        #     bank_name=data.get('bank_name'),
+        #     amount=amount,
+        #     address=data.get('address')
+        # )
 
-        Transaction.objects.create(
-            user=request.user,
-            transaction_type="TRANSFER",
-            from_account=from_account,
-            amount=amount,
-        )
+        # Transaction.objects.create(
+        #     user=request.user,
+        #     transaction_type="TRANSFER",
+        #     from_account=from_account,
+        #     amount=amount,
+        # )
 
-        return JsonResponse({"success": True, "message": "Transfer successful."})
+        # return JsonResponse({"success": True, "message": "Successful."})
 
-    return JsonResponse({"success": False, "message": "Invalid request."})
+    # return JsonResponse({"success": False, "message": "Invalid request."})
 
 
 

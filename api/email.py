@@ -290,3 +290,50 @@ def send_password_reset_email(to_email, reset_link):
 
 
 
+
+def send_otp_code_verification(to_email, otp_code, transaction_type):
+    # Email content
+    subject = "OTP Verification"
+    html_content = f"""
+    <html>
+    <body>
+        <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="cid:logo" alt="Logo" style="width: 150px;"/>
+            </div>
+            <h2>OTP Verification</h2>
+            <p>Your transaction is almost complete. We noticed you are trying to initiate a {transaction_type}.</p>
+            <p>The OTP Code is required to complete the transaction is: {otp_code}.</p>
+            
+            <p>If you didn't request this, please ignore this email.</p>
+            <p>Thanks,</p>
+            <p>First Citizen Bank</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    msg = MIMEMultipart()
+    msg['From'] = ADMIN_EMAIL
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(html_content, 'html'))
+    
+    logo_path = os.path.join(settings.BASE_DIR, "static", "images", "firstoriginallogo.png")
+    with open(logo_path, 'rb') as logo_file:
+        logo = MIMEImage(logo_file.read())
+        logo.add_header('Content-ID', '<logo>')
+        logo.add_header('Content-Disposition', 'inline', filename="logo.png")
+        msg.attach(logo)
+    
+    try:
+        with smtplib.SMTP(EMAIL_SMTP_SERVER, EMAIL_SMTP_PORT) as server:
+            server.starttls()
+            server.login(ADMIN_EMAIL, EMAIL_PASSWORD)
+            server.sendmail(ADMIN_EMAIL, to_email, msg.as_string())
+        print("Password reset email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
+

@@ -28,6 +28,7 @@ from .views import (
     personal_page,
     business, wealth, call_us, terms_services, 
     routing_number, privacy_security,
+    resend_otp_code,
 
     password_reset_request, password_reset_confirm, password_reset_complete
 
@@ -99,6 +100,7 @@ urlpatterns = [
 
     path('dashboard/validate-transfer/', validate_transfer, name="validate_transfer"),
     path('dashboard/confirm-transfer/', confirm_transfer, name="confirm_transfer"),
+    path('dashboard/resend-otp/', resend_otp_code, name="resend_otp_code"),
 
 
 

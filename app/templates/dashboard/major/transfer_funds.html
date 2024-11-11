@@ -23,6 +23,8 @@
         border-radius: 4px;
     }
 </style>
+
+
 {% endblock %}
 
 
@@ -104,10 +106,10 @@
                         </form>
 
                         <!-- Password confirmation section -->
-                        <div id="passwordSection" style="display: none;">
+                        <!-- <div id="otpSection" style="display: none;">
                             <hr>
                             <h5>Confirm Transfer</h5>
-                            <form id="passwordForm">
+                            <form id="otpForm">
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Enter your password<span
                                             class="text-danger">*</span></label>
@@ -115,7 +117,7 @@
                                 </div>
                                 <button type="submit" class="btn btn-success">Confirm Transfer</button>
                             </form>
-                        </div>
+                        </div> -->
                     </div>
                     <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
                     <div id="successMessage" class="alert alert-success" style="display: none;"></div>
@@ -136,20 +138,105 @@
             </div>
         </div>
     </div>
+
+    <!-- Password Confirmation Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otpModalLabel">Confirm Transfer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="otpSection">
+                        <p>
+                            An OTP was sent to your mail. Please do not close this modal.
+                            Please confirm the transaction with the OTP code that was sent to your mail.
+                            If you did not receive a mail, click on Resend OTP.
+                        </p>
+
+                        <p class="otpMessage" id="otpMessage" class="d-none"></p>
+                        <form id="otpForm">
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Enter your OTP<span
+                                        class="text-danger">*</span></label>
+                                <input class="form-control" id="password" name="password" required>
+                            </div>
+                            <button type="button" id="resendOTP" class="btn btn-link text-primary p-0 mb-3">Resend
+                                OTP</button>
+                            <div class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-success">Confirm Transfer</button>
+                                <div id="loadingIndicator" class="ms-3" style="font-weight: bold; display: none;">0%
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalMessageBody">
+                    <!-- The message from the backend will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pqayment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Choose Payment Method</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalPaymentBody">
+                    <!-- The message from the backend will be injected here -->
+                    {% include 'dashboard/_components/paymentIntegration.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 {% endblock %}
 
 {% block script %}
 
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
     document.getElementById('transferForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Collect form data
         const formData = new FormData(this);
 
-        // Send an async POST request to validate the transfer details
         fetch("{% url 'validate_transfer' %}", {
             method: "POST",
             headers: {
@@ -160,65 +247,116 @@
         })
             .then(response => response.json())
             .then(data => {
+                const modalMessageBody = document.getElementById('modalMessageBody');
                 if (data.success) {
-                    document.getElementById('errorMessage').style.display = 'none';
-                    // Show password confirmation form if the initial validation is successful
-                    document.getElementById('passwordSection').style.display = 'block';
-                    localStorage.setItem('transferDetails', JSON.stringify(Object.fromEntries(formData))); // Store transfer details in localStorage
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('errorMessage').style.display = 'none';
-                    document.getElementById('successMessage').textContent = data.message;
+                    // document.getElementById('otpSection').style.display = 'block';
+                    localStorage.setItem('transferDetails', JSON.stringify(Object.fromEntries(formData)));
+
+                    // Show the modal
+                    new bootstrap.Modal(document.getElementById('otpModal')).show();
                 } else {
-                    // Show error message
-                    document.getElementById('successMessage').style.display = 'none';
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('errorMessage').textContent = data.message;
-                    window.scrollY(0)
-
-
+                    modalMessageBody.textContent = data.message;
+                    modalMessageBody.classList.remove('text-success');
+                    modalMessageBody.classList.add('text-danger');
+                    // Show the modal
+                    new bootstrap.Modal(document.getElementById('messageModal')).show();
                 }
+                // Show the modal
+                // new bootstrap.Modal(document.getElementById('messageModal')).show();
             })
             .catch(error => console.error('Error:', error));
     });
 
-    document.getElementById('passwordForm').addEventListener('submit', function (e) {
+
+    document.getElementById("resendOTP").addEventListener('click', function (e) {
         e.preventDefault();
+        console.log("This loving stuff is working!")
+        const otpMessage = document.getElementById("otpMessage");
 
-        // Collect password and transfer details from localStorage
-        const password = document.getElementById('password').value;
-        const transferDetails = JSON.parse(localStorage.getItem('transferDetails'));
 
-        // Add password to the transfer details
-        transferDetails.password = password;
+        otpMessage.innerText = "OTP was sent successfully."
+        otpMessage.classList.add("text-success");
+        otpMessage.classList.toggle("d-none");
 
-        // Send an async POST request to confirm the transfer
-        fetch("{% url 'confirm_transfer' %}", {
+
+
+        fetch("{% url 'resend_otp_code' %}", {
             method: "POST",
             headers: {
                 "X-CSRFToken": "{{ csrf_token }}",
                 "Accept": "application/json"
             },
-            body: JSON.stringify(transferDetails)
+            body: JSON.stringify({ transaction_type: "transfer" }),
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 if (data.success) {
-                    // Transfer successful
-                    alert('Transfer successful!');
-                    localStorage.removeItem('transferDetails'); // Clear localStorage after success
-                    document.getElementById('errorMessage').style.display = 'none';
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('successMessage').textContent = data.message;
-                    window.location.href = "{% url 'transactions' %}"; // Optionally reload the page to reflect changes
+                    otpMessage.classList.remove("d-none");
+                    otpMessage.classList.add("text-success");
+                    otpMessage.innerText = data.message;
                 } else {
-                    // Show error message
-                    document.getElementById('successMessage').style.display = 'none';
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('errorMessage').textContent = data.message;
+                    otpMessage.classList.remove("d-none");
+                    otpMessage.classList.add("text-danger");
+                    otpMessage.innerText = data.message;
                 }
             })
-            .catch(error => console.error('Error:', error));
+
+
+
+
+
+    })
+
+    document.getElementById('otpForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const password = document.getElementById('password').value;
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        loadingIndicator.style.display = 'inline';
+        let loadingPercent = 10;
+
+        // Start loading animation
+        const loadingInterval = setInterval(() => {
+            if (loadingPercent < 90) {
+                loadingIndicator.textContent = `${loadingPercent}%`;
+                loadingPercent += 10;
+            } else {
+                clearInterval(loadingInterval);
+
+                // Send OTP verification request
+                fetch("{% url 'confirm_transfer' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Accept": "application/json",
+                    },
+                    body: JSON.stringify({ password })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadingIndicator.textContent = '100%';
+
+                            // Hide otpModal before showing paymentModal
+                            const otpModalInstance = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
+                            otpModalInstance.hide();
+
+                            // Show paymentModal
+                            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+                        } else {
+                            loadingIndicator.textContent = 'Failed';
+                            loadingIndicator.classList.add('text-danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        }, 1500);
     });
+
+    
 </script>
 
 {% endblock %}
