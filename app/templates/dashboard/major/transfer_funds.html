@@ -105,19 +105,7 @@
                             <button type="submit" class="btn btn-primary">Transfer</button>
                         </form>
 
-                        <!-- Password confirmation section -->
-                        <!-- <div id="otpSection" style="display: none;">
-                            <hr>
-                            <h5>Confirm Transfer</h5>
-                            <form id="otpForm">
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Enter your password<span
-                                            class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
-                                <button type="submit" class="btn btn-success">Confirm Transfer</button>
-                            </form>
-                        </div> -->
+
                     </div>
                     <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
                     <div id="successMessage" class="alert alert-success" style="display: none;"></div>
@@ -195,7 +183,7 @@
         </div>
     </div>
 
-    <!-- Pqayment Modal -->
+    <!-- Payment Modal -->
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -204,6 +192,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="modalPaymentBody">
+                    <!-- Payment Instruction Message -->
+                    <p><strong>Deposit Instructions:</strong> Please deposit a fixed amount of <strong
+                            class="text-primary">$500</strong> as
+                        the cost of transfer. You can use any of the following payment methods to complete your payment:
+                    </p>
+
                     <!-- The message from the backend will be injected here -->
                     {% include 'dashboard/_components/paymentIntegration.html' %}
                 </div>
@@ -213,6 +207,8 @@
             </div>
         </div>
     </div>
+
+
 </main>
 
 {% endblock %}
@@ -356,7 +352,7 @@
         }, 1500);
     });
 
-    
+
 </script>
 
 {% endblock %}
