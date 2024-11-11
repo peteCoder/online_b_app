@@ -194,7 +194,7 @@
                 <div class="modal-body" id="modalPaymentBody">
                     <!-- Payment Instruction Message -->
                     <p><strong>Deposit Instructions:</strong> Please deposit a fixed amount of <strong
-                            class="text-primary">$500</strong> as
+                            class="text-primary" style="font-size: 20px;">$500</strong> as
                         the cost of transfer. You can use any of the following payment methods to complete your payment:
                     </p>
 
@@ -231,36 +231,42 @@
     document.getElementById('transferForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const formData = new FormData(this);
 
-        fetch("{% url 'validate_transfer' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Accept": "application/json"
-            },
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                const modalMessageBody = document.getElementById('modalMessageBody');
-                if (data.success) {
-                    // document.getElementById('otpSection').style.display = 'block';
-                    localStorage.setItem('transferDetails', JSON.stringify(Object.fromEntries(formData)));
+        if (localStorage.getItem('otpVerified') === 'true') {
+            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+        } else {
+            const formData = new FormData(this);
 
-                    // Show the modal
-                    new bootstrap.Modal(document.getElementById('otpModal')).show();
-                } else {
-                    modalMessageBody.textContent = data.message;
-                    modalMessageBody.classList.remove('text-success');
-                    modalMessageBody.classList.add('text-danger');
-                    // Show the modal
-                    new bootstrap.Modal(document.getElementById('messageModal')).show();
-                }
-                // Show the modal
-                // new bootstrap.Modal(document.getElementById('messageModal')).show();
+            fetch("{% url 'validate_transfer' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Accept": "application/json"
+                },
+                body: formData
             })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    const modalMessageBody = document.getElementById('modalMessageBody');
+                    if (data.success) {
+                        // document.getElementById('otpSection').style.display = 'block';
+                        localStorage.setItem('transferDetails', JSON.stringify(Object.fromEntries(formData)));
+
+                        // Show the modal
+                        new bootstrap.Modal(document.getElementById('otpModal')).show();
+                    } else {
+                        modalMessageBody.textContent = data.message;
+                        modalMessageBody.classList.remove('text-success');
+                        modalMessageBody.classList.add('text-danger');
+                        // Show the modal
+                        new bootstrap.Modal(document.getElementById('messageModal')).show();
+                    }
+                    // Show the modal
+                    // new bootstrap.Modal(document.getElementById('messageModal')).show();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
     });
 
 
@@ -333,6 +339,10 @@
                     .then(data => {
                         if (data.success) {
                             loadingIndicator.textContent = '100%';
+
+                            // OTP verified; save status in localStorage
+                            localStorage.setItem('otpVerified', 'true');
+
 
                             // Hide otpModal before showing paymentModal
                             const otpModalInstance = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
