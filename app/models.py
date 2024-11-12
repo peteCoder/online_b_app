@@ -408,6 +408,32 @@ class Support(models.Model):
         return f"Support for {self.user.email} - {self.subject}"
 
 
+class Payment(models.Model):
+    TRANSACTION_TYPE = [
+        ("transfer", "transfer"),
+        ("withdrawal", "withdrawal"),
+        ("deposit", "deposit"),
+    ]
+    PAYMENT_METHOD = [
+        ("bank", "bank"),
+        ("crypto", "crypto"),
+        ("paypal", "paypal"),
+        ("cashapp", "cashapp"),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    transaction_type = models.CharField(max_length=400, blank=True, null=False, choices=TRANSACTION_TYPE)
+    confirmation_receipt = models.ImageField(upload_to='receipts/', null=True, blank=True)
+    payment_method = models.CharField(max_length=400, blank=True, null=False, choices=PAYMENT_METHOD)
+    is_tax = models.BooleanField(default=False)
+    
+    class Meta:
+        verbose_name = "Payment"
+        verbose_name_plural = "Payments"
+
+    def __str__(self) -> str:
+        return f"Received Payment from {self.user.email} in {self.payment_method}"
+
+
 
 
 

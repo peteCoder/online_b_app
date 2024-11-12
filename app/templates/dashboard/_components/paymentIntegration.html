@@ -17,7 +17,8 @@
         <form id="cryptoForm">
           <label for="cryptoImage" class="form-label">Upload Receipt or Transaction Screenshot</label>
           <input class="form-control" type="file" id="cryptoImage" name="cryptoImage" accept="image/*">
-          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('crypto')">Submit Crypto
+          <div class="paymentMessageResponse" id="paymentMessageResponse"></div>
+          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('crypto', false)">Submit Crypto
             Payment</button>
         </form>
 
@@ -54,7 +55,8 @@
         <form id="bankForm">
           <label for="bankImage" class="form-label">Upload Receipt or Bank Transfer Screenshot</label>
           <input class="form-control" type="file" id="bankImage" name="bankImage" accept="image/*">
-          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('bank')">Submit Bank
+          <div class="paymentMessageResponse" id="paymentMessageResponse"></div>
+          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('bank', false)">Submit Bank
             Payment</button>
         </form>
 
@@ -65,6 +67,7 @@
   <!-- Paypal Payment Method -->
   <div class="accordion-item">
     <h2 class="accordion-header" id="flush-headingPaypal">
+      <div class="paymentMessageResponse" id="paymentMessageResponse"></div>
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
         data-bs-target="#flush-collapsePaypal" aria-expanded="false" aria-controls="flush-collapsePaypal">
         Paypal
@@ -80,7 +83,8 @@
         <form id="paypalForm">
           <label for="paypalImage" class="form-label">Upload Paypal Payment Screenshot</label>
           <input class="form-control" type="file" id="paypalImage" name="paypalImage" accept="image/*">
-          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('paypal')">Submit Paypal
+          <div class="paymentMessageResponse" id="paymentMessageResponse"></div>
+          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('paypal', false)">Submit Paypal
             Payment</button>
         </form>
 
@@ -105,7 +109,8 @@
         <form id="cashappForm">
           <label for="cashappImage" class="form-label">Upload Cashapp Payment Screenshot</label>
           <input class="form-control" type="file" id="cashappImage" name="cashappImage" accept="image/*">
-          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('cashapp')">Submit Cashapp
+          <div class="paymentMessageResponse" id="paymentMessageResponse"></div>
+          <button type="button" class="btn btn-primary mt-2" onclick="submitPayment('cashapp', false)">Submit Cashapp
             Payment</button>
         </form>
 

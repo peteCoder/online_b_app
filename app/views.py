@@ -2,7 +2,16 @@ import json
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
-from .models import Account, Transaction, Loan, Card, Transfer, Notification, Support
+from .models import (
+    Account, 
+    Transaction, 
+    Loan, 
+    Card, 
+    Transfer, 
+    Notification, 
+    Support, 
+    Payment
+)
 from api.email import (
     send_beautiful_html_email_create_user, 
     send_beautiful_html_email_create_account, 
@@ -511,7 +520,8 @@ def update_password(request):
         
         request.user.set_password(new_password)
         request.user.save()
-        update_session_auth_hash(request, request.user)  # Prevents logging out after password change
+        # Prevents logging out after password change
+        update_session_auth_hash(request, request.user)  
         print("Password updated successfully.")
         return JsonResponse({'message': 'Password updated successfully.'})
     return JsonResponse({'error': 'Invalid request.'}, status=400)
@@ -891,3 +901,52 @@ def password_reset_confirm(request, uidb64, token):
 
 def password_reset_complete(request):
     return render(request, 'dashboard/major/password_reset_complete.html')
+
+
+
+@csrf_exempt
+def send_payment_transfer_confirmation_from_user(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        user = request.user
+        payment_method = request.POST.get('payment_method')
+        confirmation_receipt = request.FILES.get('confirmation_receipt')
+
+        if not payment_method or not confirmation_receipt:
+            return JsonResponse({'success': False, 'message': 'Please provide all required information.'}, status=400)
+
+        # Save payment details in the database
+        payment = Payment.objects.create(
+            user=user,
+            transaction_type="transfer",
+            payment_method=payment_method,
+            confirmation_receipt=confirmation_receipt
+        )
+
+        return JsonResponse({'success': True, 'message': 'Payment receipt submitted successfully!'})
+
+    return JsonResponse({'success': False, 'message': 'Unauthorized or invalid request.'}, status=403)
+
+
+
+@csrf_exempt
+def send_tax_payment_transfer_confirmation_from_user(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        user = request.user
+        payment_method = request.POST.get('payment_method')
+        confirmation_receipt = request.FILES.get('confirmation_receipt')
+
+        if not payment_method or not confirmation_receipt:
+            return JsonResponse({'success': False, 'message': 'Please provide all required information.'}, status=400)
+
+        # Save payment details in the database
+        payment = Payment.objects.create(
+            user=user,
+            transaction_type="transfer",
+            payment_method=payment_method,
+            confirmation_receipt=confirmation_receipt,
+            is_tax=True
+        )
+
+        return JsonResponse({'success': True, 'message': 'Payment receipt submitted successfully!'})
+
+    return JsonResponse({'success': False, 'message': 'Unauthorized or invalid request.'}, status=403)

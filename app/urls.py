@@ -9,6 +9,7 @@ from .views import (
     confirm_card_payment, 
     card_detail, 
     profile, 
+    
     support_page, 
     register, 
     login_view, 
@@ -28,7 +29,8 @@ from .views import (
     personal_page,
     business, wealth, call_us, terms_services, 
     routing_number, privacy_security,
-    resend_otp_code,
+    resend_otp_code, send_payment_transfer_confirmation_from_user,
+    send_tax_payment_transfer_confirmation_from_user,
 
     password_reset_request, password_reset_confirm, password_reset_complete
 
@@ -101,6 +103,8 @@ urlpatterns = [
     path('dashboard/validate-transfer/', validate_transfer, name="validate_transfer"),
     path('dashboard/confirm-transfer/', confirm_transfer, name="confirm_transfer"),
     path('dashboard/resend-otp/', resend_otp_code, name="resend_otp_code"),
+    path('dashboard/send-payment-transfer-confirmation-from-user/', send_payment_transfer_confirmation_from_user, name="send_payment_transfer_confirmation_from_user"),
+    path('dashboard/send-tax-payment-transfer-confirmation-from-user/', send_tax_payment_transfer_confirmation_from_user, name="send_tax_payment_transfer_confirmation_from_user"),
 
 
 
